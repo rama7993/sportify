@@ -1,0 +1,147 @@
+<div class="artist-container">
+  <!-- Artist Header -->
+  <div class="artist-header" *ngIf="artist && !loading.artist">
+    <div class="container">
+      <div class="artist-info">
+        <div class="artist-image">
+          <img [src]="getImageUrl(artist.images)" [alt]="artist.name" />
+        </div>
+        <div class="artist-details">
+          <h1 class="artist-name">{{ artist.name }}</h1>
+          <p class="artist-followers">
+            <i class="fas fa-users"></i>
+            {{ formatNumber(artist.followers?.total || 0) }} followers
+          </p>
+          <div class="artist-genres" *ngIf="artist.genres && artist.genres.length > 0">
+            <span class="genre-tag" *ngFor="let genre of artist.genres.slice(0, 5)">
+              {{ genre }}
+            </span>
+          </div>
+          <div class="artist-popularity">
+            <span class="popularity-label">Popularity:</span>
+            <div class="popularity-bar">
+              <div class="popularity-fill" [style.width.%]="artist.popularity"></div>
+            </div>
+            <span class="popularity-value">{{ artist.popularity }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State for Artist Header -->
+  <div class="artist-header loading" *ngIf="loading.artist">
+    <div class="container">
+      <div class="artist-info">
+        <div class="artist-image placeholder-glow">
+          <span class="placeholder" style="width: 200px; height: 200px; border-radius: 50%;"></span>
+        </div>
+        <div class="artist-details">
+          <div class="placeholder-glow">
+            <span class="placeholder col-8" style="height: 2rem; margin-bottom: 1rem;"></span>
+            <span class="placeholder col-4" style="height: 1.5rem; margin-bottom: 1rem;"></span>
+            <span class="placeholder col-6" style="height: 1rem;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Top Tracks Section -->
+    <section class="section" *ngIf="!loading.topTracks || topTracks.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-fire"></i> Popular Tracks
+        </h2>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.topTracks">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="tracks-list" *ngIf="!loading.topTracks && topTracks.length > 0">
+        <div class="track-item" *ngFor="let track of topTracks; let i = index">
+          <div class="track-number">{{ i + 1 }}</div>
+          <div class="track-image">
+            <img [src]="getImageUrl(track.album.images)" [alt]="track.album.name" />
+            <div class="play-overlay" (click)="playTrack(track)">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="track-info">
+            <h5 class="track-name">{{ track.name }}</h5>
+            <p class="track-album">{{ track.album.name }}</p>
+          </div>
+          <div class="track-duration">{{ formatDuration(track.duration_ms) }}</div>
+          <div class="track-popularity">{{ track.popularity }}%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Albums Section -->
+    <section class="section" *ngIf="!loading.albums || albums.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-compact-disc"></i> Albums
+        </h2>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.albums">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="albums-grid" *ngIf="!loading.albums && albums.length > 0">
+        <div class="album-card" *ngFor="let album of albums">
+          <div class="album-image">
+            <img [src]="getImageUrl(album.images)" [alt]="album.name" />
+            <div class="play-overlay">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="album-info">
+            <h5 class="album-name">
+              <a [routerLink]="['/album', album.id]">{{ album.name }}</a>
+            </h5>
+            <p class="album-year">{{ album.release_date | date:'yyyy' }}</p>
+            <p class="album-type">{{ album.album_type | titlecase }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Artists Section -->
+    <section class="section" *ngIf="!loading.relatedArtists || relatedArtists.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-users"></i> Fans Also Like
+        </h2>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.relatedArtists">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="artists-grid" *ngIf="!loading.relatedArtists && relatedArtists.length > 0">
+        <div class="artist-card" *ngFor="let relatedArtist of relatedArtists">
+          <div class="artist-image">
+            <img [src]="getImageUrl(relatedArtist.images)" [alt]="relatedArtist.name" />
+          </div>
+          <div class="artist-info">
+            <h5 class="artist-name">
+              <a [routerLink]="['/artist', relatedArtist.id]">{{ relatedArtist.name }}</a>
+            </h5>
+            <p class="artist-followers">{{ formatNumber(relatedArtist.followers?.total || 0) }} followers</p>
+            <p class="artist-genres">{{ relatedArtist.genres.slice(0, 2).join(', ') }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

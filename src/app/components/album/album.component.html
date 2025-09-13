@@ -1,0 +1,181 @@
+<div class="album-container">
+  <!-- Album Header -->
+  <div class="album-header" *ngIf="album && !loading.album">
+    <div class="container">
+      <div class="album-info">
+        <div class="album-image">
+          <img [src]="getImageUrl(album.images)" [alt]="album.name" />
+        </div>
+        <div class="album-details">
+          <h1 class="album-name">{{ album.name }}</h1>
+          <p class="album-artist">
+            <a [routerLink]="['/artist', artist.id]" *ngFor="let artist of album.artists; let last = last">
+              {{ artist.name }}<span *ngIf="!last">, </span>
+            </a>
+          </p>
+          <p class="album-meta">
+            <span class="album-year">{{ album.release_date | date:'yyyy' }}</span>
+            <span class="album-type">{{ album.album_type | titlecase }}</span>
+            <span class="album-tracks">{{ tracks.length }} tracks</span>
+          </p>
+          <div class="album-actions">
+            <button class="btn btn-primary" (click)="playTrack(tracks[0])" *ngIf="tracks.length > 0">
+              <i class="fas fa-play"></i> Play Album
+            </button>
+            <a [routerLink]="['/artist', album.artists[0].id]" class="btn btn-outline-light">
+              <i class="fas fa-user"></i> View Artist
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State for Album Header -->
+  <div class="album-header loading" *ngIf="loading.album">
+    <div class="container">
+      <div class="album-info">
+        <div class="album-image placeholder-glow">
+          <span class="placeholder" style="width: 200px; height: 200px; border-radius: 15px;"></span>
+        </div>
+        <div class="album-details">
+          <div class="placeholder-glow">
+            <span class="placeholder col-8" style="height: 2rem; margin-bottom: 1rem;"></span>
+            <span class="placeholder col-6" style="height: 1.5rem; margin-bottom: 1rem;"></span>
+            <span class="placeholder col-4" style="height: 1.2rem; margin-bottom: 1.5rem;"></span>
+            <span class="placeholder col-3" style="height: 1rem;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Tracks List Section -->
+    <section class="section" *ngIf="!loading.tracks || tracks.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-list"></i> Tracks
+        </h2>
+        <span class="track-count" *ngIf="!loading.tracks">{{ tracks.length }} songs</span>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.tracks">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="tracks-list" *ngIf="!loading.tracks && tracks.length > 0">
+        <div class="track-item" *ngFor="let track of tracks; let i = index">
+          <div class="track-number">{{ i + 1 }}</div>
+          <div class="track-image">
+            <img [src]="getImageUrl(album.images)" [alt]="album.name" />
+            <div class="play-overlay" (click)="playTrack(track)">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="track-info">
+            <h5 class="track-name">
+              <a [routerLink]="['/track', track.id]">{{ track.name }}</a>
+            </h5>
+            <p class="track-artist">{{ getArtistNames(track.artists) }}</p>
+          </div>
+          <div class="track-duration">{{ formatDuration(track.duration_ms) }}</div>
+          <div class="track-popularity">{{ track.popularity }}%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Album Information Section -->
+    <section class="section" *ngIf="album && !loading.album">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-info-circle"></i> Album Information
+        </h2>
+      </div>
+      
+      <div class="album-details-grid">
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-compact-disc"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Album Name</h5>
+            <p>{{ album.name }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Artist</h5>
+            <p>{{ getArtistNames(album.artists) }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-calendar"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Release Date</h5>
+            <p>{{ album.release_date | date:'fullDate' }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-tag"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Type</h5>
+            <p>{{ album.album_type | titlecase }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-music"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Total Tracks</h5>
+            <p>{{ tracks.length }}</p>
+          </div>
+        </div>
+        
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Markets</h5>
+            <p>{{ album.available_markets?.length || 'N/A' }} markets</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading.album && loading.tracks">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Loading album information...</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-container" *ngIf="!loading.album && !loading.tracks && !album">
+      <div class="error-content">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>Album Not Found</h3>
+        <p>The album you're looking for could not be found.</p>
+        <a routerLink="/search" class="btn btn-primary">
+          <i class="fas fa-search"></i> Search for Music
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

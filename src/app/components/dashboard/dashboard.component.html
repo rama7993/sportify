@@ -1,0 +1,166 @@
+<div class="dashboard-container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">🎵 Welcome to Sportify - Enhanced! 🎵</h1>
+        <p class="hero-subtitle">Discover new music, create playlists, and enjoy your favorite tracks</p>
+        <div class="hero-actions">
+          <a routerLink="/search" class="btn btn-primary btn-lg">
+            <i class="fas fa-search"></i> Search Music
+          </a>
+          <button class="btn btn-outline-light btn-lg" (click)="loadRecommendations()">
+            <i class="fas fa-magic"></i> Get Recommendations
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Test Message -->
+    <div class="alert alert-success" style="margin-bottom: 2rem;">
+      <h4>✅ Enhanced Features Active!</h4>
+      <p>You're now seeing the enhanced Sportify app with infinite scroll, advanced search, audio player, and more!</p>
+    </div>
+    
+    <!-- Featured Playlists -->
+    <section class="section" *ngIf="!loading.featured || featuredPlaylists.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-star"></i> Featured Playlists
+        </h2>
+        <a routerLink="/search" class="section-link">View All</a>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.featured">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="playlist-grid" *ngIf="!loading.featured">
+        <div class="playlist-card" *ngFor="let playlist of featuredPlaylists">
+          <div class="playlist-image">
+            <img [src]="getImageUrl(playlist.images)" [alt]="playlist.name" />
+            <div class="play-overlay">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="playlist-info">
+            <h5 class="playlist-name">{{ playlist.name }}</h5>
+            <p class="playlist-description">{{ playlist.description }}</p>
+            <p class="playlist-tracks">{{ playlist.tracks.total }} tracks</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- New Releases -->
+    <section class="section" *ngIf="!loading.newReleases || newReleases.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-music"></i> New Releases
+        </h2>
+        <a routerLink="/search" class="section-link">View All</a>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.newReleases">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="album-grid" *ngIf="!loading.newReleases">
+        <div class="album-card" *ngFor="let album of newReleases">
+          <div class="album-image">
+            <img [src]="getImageUrl(album.images)" [alt]="album.name" />
+            <div class="play-overlay" (click)="playTrack(album)">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="album-info">
+            <h5 class="album-name">
+              <a [routerLink]="['/album', album.id]">{{ album.name }}</a>
+            </h5>
+            <p class="album-artist">{{ album.artists[0].name }}</p>
+            <p class="album-date">{{ album.release_date | date:'MMM yyyy' }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section" *ngIf="!loading.categories || categories.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-tags"></i> Browse by Category
+        </h2>
+        <a routerLink="/search" class="section-link">View All</a>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.categories">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="category-grid" *ngIf="!loading.categories">
+        <div class="category-card" *ngFor="let category of categories">
+          <div class="category-image">
+            <img [src]="getImageUrl(category.icons)" [alt]="category.name" />
+          </div>
+          <div class="category-info">
+            <h5 class="category-name">{{ category.name }}</h5>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recommendations -->
+    <section class="section" *ngIf="!loading.recommendations || recommendations.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-magic"></i> Recommended for You
+        </h2>
+        <button class="btn btn-outline-primary btn-sm" (click)="loadRecommendations()">
+          <i class="fas fa-refresh"></i> Refresh
+        </button>
+      </div>
+      
+      <div class="loading-container" *ngIf="loading.recommendations">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      
+      <div class="track-grid" *ngIf="!loading.recommendations">
+        <div class="track-card" *ngFor="let track of recommendations">
+          <div class="track-image">
+            <img [src]="getImageUrl(track.album.images)" [alt]="track.album.name" />
+            <div class="play-overlay" (click)="playTrack(track)">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="track-info">
+            <h5 class="track-name">{{ track.name }}</h5>
+            <p class="track-artist">
+              <a [routerLink]="['/artist', artist.id]" *ngFor="let artist of track.artists; let last = last">
+                {{ artist.name }}<span *ngIf="!last">, </span>
+              </a>
+            </p>
+            <p class="track-album">{{ track.album.name }}</p>
+            <div class="track-details">
+              <span class="track-duration">{{ formatDuration(track.duration_ms) }}</span>
+              <span class="track-popularity">{{ track.popularity }}%</span>
+            </div>
+            <audio controls class="track-preview" *ngIf="track.preview_url">
+              <source [src]="track.preview_url" type="audio/mpeg">
+            </audio>
+            <p class="no-preview" *ngIf="!track.preview_url">No preview available</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

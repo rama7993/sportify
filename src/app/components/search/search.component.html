@@ -1,0 +1,198 @@
+<div class="search-container">
+  <!-- Header -->
+  <div class="search-header">
+    <div class="container">
+      <h1 class="search-title">Discover Music</h1>
+      <p class="search-subtitle">Search for your favorite songs, artists, albums, and playlists</p>
+    </div>
+  </div>
+
+  <!-- Search Form -->
+  <div class="container">
+    <div class="search-form-container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="search-form">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control search-input"
+                placeholder="Search for songs, artists, albums, playlists..."
+                [(ngModel)]="query"
+                (input)="onSearchInput()"
+                (keyup.enter)="search()"
+              />
+              <button class="btn btn-primary search-btn" type="button" (click)="search()">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            
+            <!-- Search Type Filter -->
+            <div class="search-filters">
+              <div class="btn-group" role="group">
+                <input type="radio" class="btn-check" name="searchType" id="all" value="all" 
+                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
+                <label class="btn btn-outline-primary" for="all">All</label>
+
+                <input type="radio" class="btn-check" name="searchType" id="tracks" value="track" 
+                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
+                <label class="btn btn-outline-primary" for="tracks">Tracks</label>
+
+                <input type="radio" class="btn-check" name="searchType" id="artists" value="artist" 
+                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
+                <label class="btn btn-outline-primary" for="artists">Artists</label>
+
+                <input type="radio" class="btn-check" name="searchType" id="albums" value="album" 
+                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
+                <label class="btn btn-outline-primary" for="albums">Albums</label>
+
+                <input type="radio" class="btn-check" name="searchType" id="playlists" value="playlist" 
+                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
+                <label class="btn btn-outline-primary" for="playlists">Playlists</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="results-summary" *ngIf="totalResults > 0">
+      <h3>Found {{ totalResults }} results</h3>
+    </div>
+
+    <!-- Tracks Section -->
+    <div class="results-section" *ngIf="tracks.length > 0">
+      <h4 class="section-title">
+        <i class="fas fa-music"></i> Tracks
+      </h4>
+      <div class="row">
+        <div class="col-lg-6 col-md-12 mb-3" *ngFor="let track of tracks">
+          <div class="track-card">
+            <div class="track-image">
+              <img [src]="getImageUrl(track.album.images)" [alt]="track.album.name" />
+              <div class="play-overlay" (click)="playTrack(track)">
+                <i class="fas fa-play"></i>
+              </div>
+            </div>
+            <div class="track-info">
+              <h5 class="track-name">{{ track.name }}</h5>
+              <p class="track-artist">
+                <a [routerLink]="['/artist', artist.id]" *ngFor="let artist of track.artists; let last = last">
+                  {{ artist.name }}<span *ngIf="!last">, </span>
+                </a>
+              </p>
+              <p class="track-album">{{ track.album.name }}</p>
+              <div class="track-details">
+                <span class="track-duration">{{ formatDuration(track.duration_ms) }}</span>
+                <span class="track-popularity">{{ track.popularity }}% popular</span>
+              </div>
+              <audio controls class="track-preview" *ngIf="track.preview_url">
+                <source [src]="track.preview_url" type="audio/mpeg">
+                Your browser does not support the audio element.
+              </audio>
+              <p class="no-preview" *ngIf="!track.preview_url">No preview available</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Artists Section -->
+    <div class="results-section" *ngIf="artists.length > 0">
+      <h4 class="section-title">
+        <i class="fas fa-user"></i> Artists
+      </h4>
+      <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let artist of artists">
+          <div class="artist-card">
+            <div class="artist-image">
+              <img [src]="getImageUrl(artist.images)" [alt]="artist.name" />
+            </div>
+            <div class="artist-info">
+              <h5 class="artist-name">
+                <a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a>
+              </h5>
+              <p class="artist-followers">{{ artist.followers.total | number }} followers</p>
+              <p class="artist-genres">{{ artist.genres.slice(0, 2).join(', ') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Albums Section -->
+    <div class="results-section" *ngIf="albums.length > 0">
+      <h4 class="section-title">
+        <i class="fas fa-compact-disc"></i> Albums
+      </h4>
+      <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let album of albums">
+          <div class="album-card">
+            <div class="album-image">
+              <img [src]="getImageUrl(album.images)" [alt]="album.name" />
+            </div>
+            <div class="album-info">
+              <h5 class="album-name">
+                <a [routerLink]="['/album', album.id]">{{ album.name }}</a>
+              </h5>
+              <p class="album-artist">{{ album.artists[0].name }}</p>
+              <p class="album-year">{{ album.release_date | date:'yyyy' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playlists Section -->
+    <div class="results-section" *ngIf="playlists.length > 0">
+      <h4 class="section-title">
+        <i class="fas fa-list"></i> Playlists
+      </h4>
+      <div class="row">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let playlist of playlists">
+          <div class="playlist-card">
+            <div class="playlist-image">
+              <img [src]="getImageUrl(playlist?.images || [])" [alt]="playlist?.name" />
+            </div>
+            <div class="playlist-info">
+              <h5 class="playlist-name">{{ playlist?.name }}</h5>
+              <p class="playlist-owner">by {{ playlist?.owner.display_name }}</p>
+              <p class="playlist-tracks">{{ playlist?.tracks.total }} tracks</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="load-more-container" *ngIf="hasMore">
+      <button 
+        class="btn btn-outline-primary load-more-btn" 
+        (click)="loadMore()" 
+        [disabled]="loadingMore">
+        <span *ngIf="!loadingMore">Load More</span>
+        <span *ngIf="loadingMore">
+          <i class="fas fa-spinner fa-spin"></i> Loading...
+        </span>
+      </button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-container" *ngIf="loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Searching for music...</p>
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="!loading && totalResults === 0 && query.trim()">
+      <div class="no-results-content">
+        <i class="fas fa-search"></i>
+        <h3>No results found</h3>
+        <p>Try searching for something else or check your spelling</p>
+      </div>
+    </div>
+  </div>
+</div>
