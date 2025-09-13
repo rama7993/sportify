@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   spotify: {
-    clientId: 'your-client-id-here',
-    clientSecret: 'your-client-secret-here'
+    clientId: '5705e43cb6af4b79be9b46229d29fd58',
+    clientSecret: '128c5e60b061432cad4677d49805370a'
   }
 };

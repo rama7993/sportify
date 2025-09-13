@@ -53,9 +53,36 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Error loading featured playlists', err);
+          this.loadMockPlaylists();
           this.loading.featured = false;
         }
       });
+  }
+
+  private loadMockPlaylists(): void {
+    this.featuredPlaylists = [
+      {
+        id: '1',
+        name: 'Today\'s Top Hits',
+        description: 'The most played songs right now',
+        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Top+Hits' }],
+        tracks: { total: 50 }
+      },
+      {
+        id: '2',
+        name: 'Discover Weekly',
+        description: 'Your weekly mixtape of fresh music',
+        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Discover' }],
+        tracks: { total: 30 }
+      },
+      {
+        id: '3',
+        name: 'Chill Hits',
+        description: 'Kick back to the best new and recent chill hits',
+        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Chill' }],
+        tracks: { total: 40 }
+      }
+    ];
   }
 
   private loadNewReleases(): void {
@@ -68,9 +95,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Error loading new releases', err);
+          this.loadMockAlbums();
           this.loading.newReleases = false;
         }
       });
+  }
+
+  private loadMockAlbums(): void {
+    this.newReleases = [
+      {
+        id: '1',
+        name: 'Future Nostalgia',
+        artists: [{ name: 'Dua Lipa' }],
+        release_date: '2020-03-27',
+        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Future+Nostalgia' }],
+        album_type: 'album'
+      },
+      {
+        id: '2',
+        name: 'After Hours',
+        artists: [{ name: 'The Weeknd' }],
+        release_date: '2020-03-20',
+        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=After+Hours' }],
+        album_type: 'album'
+      },
+      {
+        id: '3',
+        name: 'Fine Line',
+        artists: [{ name: 'Harry Styles' }],
+        release_date: '2019-12-13',
+        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Fine+Line' }],
+        album_type: 'album'
+      }
+    ];
   }
 
   private loadCategories(): void {
@@ -83,9 +140,35 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Error loading categories', err);
+          this.loadMockCategories();
           this.loading.categories = false;
         }
       });
+  }
+
+  private loadMockCategories(): void {
+    this.categories = [
+      {
+        id: 'pop',
+        name: 'Pop',
+        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Pop' }]
+      },
+      {
+        id: 'rock',
+        name: 'Rock',
+        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Rock' }]
+      },
+      {
+        id: 'electronic',
+        name: 'Electronic',
+        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Electronic' }]
+      },
+      {
+        id: 'hip-hop',
+        name: 'Hip-Hop',
+        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Hip-Hop' }]
+      }
+    ];
   }
 
   loadRecommendations(): void {
