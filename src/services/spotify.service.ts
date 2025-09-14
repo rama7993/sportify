@@ -43,13 +43,13 @@ export class SpotifyService {
   private clientId = environment.spotify.clientId;
   private clientSecret = environment.spotify.clientSecret;
   private accessToken!: string;
-  
+
   // Audio player state
   private currentTrackSubject = new BehaviorSubject<Track | null>(null);
   private isPlayingSubject = new BehaviorSubject<boolean>(false);
   private currentTimeSubject = new BehaviorSubject<number>(0);
   private durationSubject = new BehaviorSubject<number>(0);
-  
+
   public currentTrack$ = this.currentTrackSubject.asObservable();
   public isPlaying$ = this.isPlayingSubject.asObservable();
   public currentTime$ = this.currentTimeSubject.asObservable();
@@ -75,8 +75,11 @@ export class SpotifyService {
     );
   }
 
-  // Enhanced search with multiple types
-  searchAll(query: string, limit: number = 20, offset: number = 0): Observable<any> {
+  searchAll(
+    query: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
     const params = new HttpParams()
       .set('q', query)
       .set('type', 'track,artist,album,playlist')
@@ -127,7 +130,11 @@ export class SpotifyService {
     );
   }
 
-  getArtistAlbums(artistId: string, limit: number = 20, offset: number = 0): Observable<any> {
+  getArtistAlbums(
+    artistId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
@@ -159,15 +166,22 @@ export class SpotifyService {
   getRelatedArtists(artistId: string): Observable<any> {
     return this.ensureAccessToken().pipe(
       switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/artists/${artistId}/related-artists`, {
-          headers: this.setAuthHeader(),
-        })
+        this.http.get<any>(
+          `${this.apiUrl}/artists/${artistId}/related-artists`,
+          {
+            headers: this.setAuthHeader(),
+          }
+        )
       )
     );
   }
 
   // Get album tracks
-  getAlbumTracks(albumId: string, limit: number = 20, offset: number = 0): Observable<any> {
+  getAlbumTracks(
+    albumId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
@@ -184,7 +198,10 @@ export class SpotifyService {
   }
 
   // Get featured playlists
-  getFeaturedPlaylists(limit: number = 20, offset: number = 0): Observable<any> {
+  getFeaturedPlaylists(
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
@@ -235,7 +252,11 @@ export class SpotifyService {
   }
 
   // Get category playlists
-  getCategoryPlaylists(categoryId: string, limit: number = 20, offset: number = 0): Observable<any> {
+  getCategoryPlaylists(
+    categoryId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
@@ -243,18 +264,28 @@ export class SpotifyService {
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/browse/categories/${categoryId}/playlists`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
+        this.http.get<any>(
+          `${this.apiUrl}/browse/categories/${categoryId}/playlists`,
+          {
+            headers: this.setAuthHeader(),
+            params,
+          }
+        )
       )
     );
   }
 
   // Get recommendations
-  getRecommendations(seedTracks?: string[], seedArtists?: string[], seedGenres?: string[], limit: number = 20): Observable<any> {
-    let params = new HttpParams().set('limit', limit.toString()).set('market', 'US');
-    
+  getRecommendations(
+    seedTracks?: string[],
+    seedArtists?: string[],
+    seedGenres?: string[],
+    limit: number = 20
+  ): Observable<any> {
+    let params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('market', 'US');
+
     if (seedTracks && seedTracks.length > 0) {
       params = params.set('seed_tracks', seedTracks.join(','));
     }

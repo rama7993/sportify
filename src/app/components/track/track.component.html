@@ -4,7 +4,10 @@
     <div class="container">
       <div class="track-info">
         <div class="track-image">
-          <img [src]="getImageUrl(track.album.images)" [alt]="track.album.name" />
+          <img
+            [src]="getImageUrl(track.album.images)"
+            [alt]="track.album.name"
+          />
           <div class="play-overlay" (click)="playTrack()">
             <i class="fas fa-play"></i>
           </div>
@@ -12,12 +15,17 @@
         <div class="track-details">
           <h1 class="track-name">{{ track.name }}</h1>
           <p class="track-artist">
-            <a [routerLink]="['/artist', artist.id]" *ngFor="let artist of track.artists; let last = last">
+            <a
+              [routerLink]="['/artist', artist.id]"
+              *ngFor="let artist of track.artists; let last = last"
+            >
               {{ artist.name }}<span *ngIf="!last">, </span>
             </a>
           </p>
           <p class="track-album">
-            <a [routerLink]="['/album', track.album.id]">{{ track.album.name }}</a>
+            <a [routerLink]="['/album', track.album.id]">{{
+              track.album.name
+            }}</a>
           </p>
           <div class="track-meta">
             <div class="meta-item">
@@ -30,7 +38,7 @@
             </div>
             <div class="meta-item">
               <i class="fas fa-calendar"></i>
-              <span>{{ track.album.release_date | date:'yyyy' }}</span>
+              <span>{{ track.album.release_date | date : "yyyy" }}</span>
             </div>
           </div>
         </div>
@@ -43,14 +51,26 @@
     <div class="container">
       <div class="track-info">
         <div class="track-image placeholder-glow">
-          <span class="placeholder" style="width: 200px; height: 200px; border-radius: 15px;"></span>
+          <span
+            class="placeholder"
+            style="width: 200px; height: 200px; border-radius: 15px"
+          ></span>
         </div>
         <div class="track-details">
           <div class="placeholder-glow">
-            <span class="placeholder col-8" style="height: 2rem; margin-bottom: 1rem;"></span>
-            <span class="placeholder col-6" style="height: 1.5rem; margin-bottom: 1rem;"></span>
-            <span class="placeholder col-4" style="height: 1.2rem; margin-bottom: 1.5rem;"></span>
-            <span class="placeholder col-3" style="height: 1rem;"></span>
+            <span
+              class="placeholder col-8"
+              style="height: 2rem; margin-bottom: 1rem"
+            ></span>
+            <span
+              class="placeholder col-6"
+              style="height: 1.5rem; margin-bottom: 1rem"
+            ></span>
+            <span
+              class="placeholder col-4"
+              style="height: 1.2rem; margin-bottom: 1.5rem"
+            ></span>
+            <span class="placeholder col-3" style="height: 1rem"></span>
           </div>
         </div>
       </div>
@@ -61,36 +81,37 @@
     <!-- Audio Player Section -->
     <section class="section" *ngIf="track && !loading">
       <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-music"></i> Preview
-        </h2>
+        <h2 class="section-title"><i class="fas fa-music"></i> Preview</h2>
       </div>
-      
+
       <div class="audio-player-section">
         <div class="audio-player-card">
           <div class="player-info">
             <div class="player-image">
-              <img [src]="getImageUrl(track.album.images)" [alt]="track.album.name" />
+              <img
+                [src]="getImageUrl(track.album.images)"
+                [alt]="track.album.name"
+              />
             </div>
             <div class="player-details">
               <h4>{{ track.name }}</h4>
               <p>{{ getArtistNames(track.artists) }}</p>
             </div>
           </div>
-          
+
           <div class="player-controls">
             <button class="play-btn" (click)="playTrack()">
               <i class="fas fa-play"></i>
             </button>
           </div>
-          
+
           <div class="audio-container" *ngIf="track.preview_url">
             <audio controls class="audio-player">
-              <source [src]="track.preview_url" type="audio/mpeg">
+              <source [src]="track.preview_url" type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
           </div>
-          
+
           <div class="no-preview" *ngIf="!track.preview_url">
             <i class="fas fa-exclamation-triangle"></i>
             <p>No preview available for this track</p>
@@ -106,7 +127,7 @@
           <i class="fas fa-info-circle"></i> Track Information
         </h2>
       </div>
-      
+
       <div class="track-details-grid">
         <div class="detail-card">
           <div class="detail-icon">
@@ -117,7 +138,7 @@
             <p>{{ track.name }}</p>
           </div>
         </div>
-        
+
         <div class="detail-card">
           <div class="detail-icon">
             <i class="fas fa-user"></i>
@@ -127,7 +148,7 @@
             <p>{{ getArtistNames(track.artists) }}</p>
           </div>
         </div>
-        
+
         <div class="detail-card">
           <div class="detail-icon">
             <i class="fas fa-compact-disc"></i>
@@ -135,11 +156,13 @@
           <div class="detail-content">
             <h5>Album</h5>
             <p>
-              <a [routerLink]="['/album', track.album.id]">{{ track.album.name }}</a>
+              <a [routerLink]="['/album', track.album.id]">{{
+                track.album.name
+              }}</a>
             </p>
           </div>
         </div>
-        
+
         <div class="detail-card">
           <div class="detail-icon">
             <i class="fas fa-clock"></i>
@@ -149,7 +172,7 @@
             <p>{{ formatDuration(track.duration_ms) }}</p>
           </div>
         </div>
-        
+
         <div class="detail-card">
           <div class="detail-icon">
             <i class="fas fa-fire"></i>
@@ -159,14 +182,14 @@
             <p>{{ track.popularity }}%</p>
           </div>
         </div>
-        
+
         <div class="detail-card">
           <div class="detail-icon">
             <i class="fas fa-calendar"></i>
           </div>
           <div class="detail-content">
             <h5>Release Date</h5>
-            <p>{{ track.album.release_date | date:'fullDate' }}</p>
+            <p>{{ track.album.release_date | date : "fullDate" }}</p>
           </div>
         </div>
       </div>
@@ -179,20 +202,30 @@
           <i class="fas fa-compact-disc"></i> From Album
         </h2>
       </div>
-      
+
       <div class="album-card">
         <div class="album-image">
-          <img [src]="getImageUrl(track.album.images)" [alt]="track.album.name" />
+          <img
+            [src]="getImageUrl(track.album.images)"
+            [alt]="track.album.name"
+          />
         </div>
         <div class="album-info">
           <h3 class="album-name">
-            <a [routerLink]="['/album', track.album.id]">{{ track.album.name }}</a>
+            <a [routerLink]="['/album', track.album.id]">{{
+              track.album.name
+            }}</a>
           </h3>
           <p class="album-artist">{{ getArtistNames(track.album.artists) }}</p>
-          <p class="album-year">{{ track.album.release_date | date:'yyyy' }}</p>
+          <p class="album-year">
+            {{ track.album.release_date | date : "yyyy" }}
+          </p>
           <p class="album-type">{{ track.album.album_type | titlecase }}</p>
           <div class="album-actions">
-            <a [routerLink]="['/album', track.album.id]" class="btn btn-primary">
+            <a
+              [routerLink]="['/album', track.album.id]"
+              class="btn btn-primary"
+            >
               <i class="fas fa-list"></i> View Album
             </a>
           </div>

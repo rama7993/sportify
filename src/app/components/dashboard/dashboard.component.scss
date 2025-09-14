@@ -5,7 +5,11 @@
 }
 
 .hero-section {
-  background: linear-gradient(135deg, rgba(29, 185, 84, 0.8) 0%, rgba(30, 215, 96, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(29, 185, 84, 0.8) 0%,
+    rgba(30, 215, 96, 0.8) 100%
+  );
   padding: 4rem 0;
   text-align: center;
   margin-bottom: 3rem;
@@ -41,32 +45,32 @@
   padding: 0.8rem 2rem;
   font-weight: 600;
   transition: all 0.3s ease;
-  
+
   &.btn-primary {
     background: linear-gradient(45deg, #1db954, #1ed760);
     border: none;
-    
+
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
     }
   }
-  
+
   &.btn-outline-light {
     border: 2px solid white;
     color: white;
-    
+
     &:hover {
       background: white;
       color: #1db954;
       transform: translateY(-2px);
     }
   }
-  
+
   &.btn-outline-primary {
     border: 2px solid #1db954;
     color: #1db954;
-    
+
     &:hover {
       background: #1db954;
       color: white;
@@ -92,7 +96,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   i {
     font-size: 1.2rem;
   }
@@ -102,7 +106,7 @@
   color: #1db954;
   text-decoration: none;
   font-weight: 500;
-  
+
   &:hover {
     text-decoration: underline;
   }
@@ -111,7 +115,7 @@
 .loading-container {
   text-align: center;
   padding: 3rem 0;
-  
+
   .spinner-border {
     width: 3rem;
     height: 3rem;
@@ -144,7 +148,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
   height: 100%;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -156,18 +160,18 @@
   display: flex;
   gap: 1rem;
   align-items: flex-start;
-  
+
   .track-image {
     flex-shrink: 0;
     position: relative;
-    
+
     img {
       width: 80px;
       height: 80px;
       border-radius: 10px;
       object-fit: cover;
     }
-    
+
     .play-overlay {
       position: absolute;
       top: 0;
@@ -182,71 +186,71 @@
       opacity: 0;
       transition: opacity 0.3s ease;
       cursor: pointer;
-      
+
       i {
         font-size: 1.5rem;
         color: white;
       }
     }
-    
+
     &:hover .play-overlay {
       opacity: 1;
     }
   }
-  
+
   .track-info {
     flex: 1;
-    
+
     .track-name {
       color: white;
       font-weight: 600;
       margin-bottom: 0.5rem;
       font-size: 1.1rem;
     }
-    
+
     .track-artist {
       color: rgba(255, 255, 255, 0.8);
       margin-bottom: 0.3rem;
-      
+
       a {
         color: #1db954;
         text-decoration: none;
-        
+
         &:hover {
           text-decoration: underline;
         }
       }
     }
-    
+
     .track-album {
       color: rgba(255, 255, 255, 0.6);
       font-size: 0.9rem;
       margin-bottom: 0.5rem;
     }
-    
+
     .track-details {
       display: flex;
       gap: 1rem;
       margin-bottom: 0.5rem;
-      
+
       .track-duration {
         color: rgba(255, 255, 255, 0.7);
         font-size: 0.8rem;
       }
-      
+
       .track-popularity {
         color: #1db954;
         font-size: 0.8rem;
         font-weight: 600;
       }
     }
-    
+
     .track-preview {
       width: 100%;
       height: 32px;
       margin-top: 0.5rem;
     }
-    
+
     .no-preview {
       color: rgba(255, 255, 255, 0.5);
       font-size: 0.8rem;
@@ -260,13 +264,13 @@
 .album-card,
 .category-card {
   text-align: center;
-  
+
   .playlist-image,
   .album-image,
   .category-image {
     margin-bottom: 1rem;
     position: relative;
-    
+
     img {
       width: 120px;
       height: 120px;
@@ -274,7 +278,7 @@
       object-fit: cover;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
-    
+
     .play-overlay {
       position: absolute;
       top: 0;
@@ -289,18 +293,18 @@
       opacity: 0;
       transition: opacity 0.3s ease;
       cursor: pointer;
-      
+
       i {
         font-size: 2rem;
         color: white;
       }
     }
-    
+
     &:hover .play-overlay {
       opacity: 1;
     }
   }
-  
+
   .playlist-info,
   .album-info,
   .category-info {
@@ -308,18 +312,18 @@
     .album-name,
     .category-name {
       margin-bottom: 0.5rem;
-      
+
       a {
         color: white;
         text-decoration: none;
         font-weight: 600;
-        
+
         &:hover {
           color: #1db954;
         }
       }
     }
-    
+
     .playlist-description {
       color: rgba(255, 255, 255, 0.7);
       font-size: 0.9rem;
@@ -329,7 +333,7 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    
+
     .playlist-tracks,
     .album-artist,
     .album-date {
@@ -345,36 +349,36 @@
   .hero-title {
     font-size: 2.5rem;
   }
-  
+
   .hero-subtitle {
     font-size: 1.1rem;
   }
-  
+
   .hero-actions {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .section-header {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
   }
-  
+
   .playlist-grid,
   .album-grid,
   .category-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
-  
+
   .track-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .track-card {
     flex-direction: column;
     text-align: center;
-    
+
     .track-image {
       align-self: center;
     }
@@ -385,15 +389,15 @@
   .hero-section {
     padding: 2rem 0;
   }
-  
+
   .hero-title {
     font-size: 2rem;
   }
-  
+
   .section {
     margin-bottom: 2rem;
   }
-  
+
   .playlist-grid,
   .album-grid,
   .category-grid {

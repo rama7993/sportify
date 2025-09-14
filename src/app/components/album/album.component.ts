@@ -15,12 +15,12 @@ export class AlbumComponent implements OnInit, OnDestroy {
   id!: string;
   album: any = null;
   tracks: Track[] = [];
-  
+
   loading = {
     album: true,
-    tracks: true
+    tracks: true,
   };
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -50,7 +50,8 @@ export class AlbumComponent implements OnInit, OnDestroy {
   }
 
   private loadAlbum(): void {
-    this.spotifyService.getAlbums(this.id)
+    this.spotifyService
+      .getAlbums(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -60,12 +61,13 @@ export class AlbumComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error loading album', err);
           this.loading.album = false;
-        }
+        },
       });
   }
 
   private loadTracks(): void {
-    this.spotifyService.getAlbumTracks(this.id, 50, 0)
+    this.spotifyService
+      .getAlbumTracks(this.id, 50, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -75,7 +77,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error loading tracks', err);
           this.loading.tracks = false;
-        }
+        },
       });
   }
 
@@ -90,11 +92,13 @@ export class AlbumComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0 ? images[0].url : 'assets/placeholder-album.png';
+    return images && images.length > 0
+      ? images[0].url
+      : 'assets/placeholder-album.png';
   }
 
   getArtistNames(artists: any[]): string {
-    return artists.map(artist => artist.name).join(', ');
+    return artists.map((artist) => artist.name).join(', ');
   }
 
   formatNumber(num: number): string {

@@ -3,7 +3,10 @@
     <!-- Track Info -->
     <div class="track-info">
       <div class="track-image">
-        <img [src]="getImageUrl(currentTrack.album.images)" [alt]="currentTrack.album.name" />
+        <img
+          [src]="getImageUrl(currentTrack.album.images)"
+          [alt]="currentTrack.album.name"
+        />
       </div>
       <div class="track-details">
         <h5 class="track-name">{{ currentTrack.name }}</h5>
@@ -14,26 +17,40 @@
     <!-- Player Controls -->
     <div class="player-controls">
       <div class="control-buttons">
-        <button class="control-btn" (click)="toggleShuffle()" [class.active]="isShuffled">
+        <button
+          class="control-btn"
+          (click)="toggleShuffle()"
+          [class.active]="isShuffled"
+        >
           <i class="fas fa-random"></i>
         </button>
-        
+
         <button class="control-btn prev-btn">
           <i class="fas fa-step-backward"></i>
         </button>
-        
+
         <button class="control-btn play-btn" (click)="togglePlayPause()">
-          <i class="fas" [class.fa-play]="!isPlaying" [class.fa-pause]="isPlaying"></i>
+          <i
+            class="fas"
+            [class.fa-play]="!isPlaying"
+            [class.fa-pause]="isPlaying"
+          ></i>
         </button>
-        
+
         <button class="control-btn next-btn">
           <i class="fas fa-step-forward"></i>
         </button>
-        
-        <button class="control-btn" (click)="toggleRepeat()" [class.active]="repeatMode !== 'none'">
-          <i class="fas" 
-             [class.fa-redo]="repeatMode === 'all'" 
-             [class.fa-redo-alt]="repeatMode === 'one'"></i>
+
+        <button
+          class="control-btn"
+          (click)="toggleRepeat()"
+          [class.active]="repeatMode !== 'none'"
+        >
+          <i
+            class="fas"
+            [class.fa-redo]="repeatMode === 'all'"
+            [class.fa-redo-alt]="repeatMode === 'one'"
+          ></i>
         </button>
       </div>
 
@@ -41,14 +58,15 @@
       <div class="progress-container">
         <span class="time current-time">{{ formatTime(currentTime) }}</span>
         <div class="progress-bar-container">
-          <input 
-            type="range" 
-            class="progress-bar" 
-            min="0" 
-            [max]="duration || 0" 
+          <input
+            type="range"
+            class="progress-bar"
+            min="0"
+            [max]="duration || 0"
             [value]="currentTime"
             (input)="seekTo($event)"
-            #progressBar>
+            #progressBar
+          />
         </div>
         <span class="time total-time">{{ formatTime(duration) }}</span>
       </div>
@@ -57,31 +75,36 @@
     <!-- Volume Controls -->
     <div class="volume-controls">
       <button class="control-btn" (click)="toggleMute()">
-        <i class="fas" [class.fa-volume-up]="!isMuted" [class.fa-volume-mute]="isMuted"></i>
+        <i
+          class="fas"
+          [class.fa-volume-up]="!isMuted"
+          [class.fa-volume-mute]="isMuted"
+        ></i>
       </button>
-      
+
       <div class="volume-slider-container">
-        <input 
-          type="range" 
-          class="volume-slider" 
-          min="0" 
-          max="1" 
-          step="0.01" 
+        <input
+          type="range"
+          class="volume-slider"
+          min="0"
+          max="1"
+          step="0.01"
           [value]="volume"
-          (input)="setVolume($event)">
+          (input)="setVolume($event)"
+        />
       </div>
-      
+
       <span class="volume-percentage">{{ Math.round(volume * 100) }}%</span>
     </div>
   </div>
 
   <!-- Hidden Audio Element -->
-  <audio 
+  <audio
     #audioElement
     (timeupdate)="onTimeUpdate()"
     (loadedmetadata)="onLoadedMetadata()"
     (ended)="onEnded()"
     [volume]="volume"
-    [muted]="isMuted">
-  </audio>
+    [muted]="isMuted"
+  ></audio>
 </div>

@@ -28,7 +28,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     i {
       font-size: 1.5rem;
     }
@@ -38,7 +38,7 @@
 .nav-links {
   display: flex;
   gap: 2rem;
-  
+
   a {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
@@ -49,17 +49,17 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     &:hover {
       color: white;
       background: rgba(255, 255, 255, 0.1);
     }
-    
+
     &.active {
       color: #1db954;
       background: rgba(29, 185, 84, 0.1);
     }
-    
+
     i {
       font-size: 0.9rem;
     }
@@ -67,9 +67,9 @@
 }
 
 .main-content {
-  margin-top: 80px; // Account for fixed navigation
-  min-height: calc(100vh - 80px);
-  padding-bottom: 100px; // Account for fixed audio player
+  margin-top: 60px; // Account for fixed navigation
+  min-height: calc(100vh - 60px);
+  padding-bottom: 80px; // Account for fixed audio player
 }
 
 // Responsive Design
@@ -79,20 +79,20 @@
     gap: 1rem;
     padding: 0.5rem;
   }
-  
+
   .nav-brand h2 {
     font-size: 1.3rem;
   }
-  
+
   .nav-links {
     gap: 1rem;
-    
+
     a {
       padding: 0.4rem 0.8rem;
       font-size: 0.9rem;
     }
   }
-  
+
   .main-content {
     margin-top: 120px;
   }
@@ -103,13 +103,13 @@
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
-    
+
     a {
       justify-content: center;
       padding: 0.6rem 1rem;
     }
   }
-  
+
   .main-content {
     margin-top: 160px;
   }

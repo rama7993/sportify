@@ -15,10 +15,13 @@ export class TrackComponent implements OnInit, OnDestroy {
   id!: string;
   track: Track | null = null;
   loading: boolean = true;
-  
+
   private destroy$ = new Subject<void>();
 
-  constructor(private spotifyService: SpotifyService, private route: ActivatedRoute) {
+  constructor(
+    private spotifyService: SpotifyService,
+    private route: ActivatedRoute
+  ) {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
       if (this.id) {
@@ -37,7 +40,8 @@ export class TrackComponent implements OnInit, OnDestroy {
   }
 
   private loadTrack(): void {
-    this.spotifyService.getTracks(this.id)
+    this.spotifyService
+      .getTracks(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -47,7 +51,7 @@ export class TrackComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error loading track', err);
           this.loading = false;
-        }
+        },
       });
   }
 
@@ -64,11 +68,13 @@ export class TrackComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0 ? images[0].url : 'assets/placeholder-album.png';
+    return images && images.length > 0
+      ? images[0].url
+      : 'assets/placeholder-album.png';
   }
 
   getArtistNames(artists: any[]): string {
-    return artists.map(artist => artist.name).join(', ');
+    return artists.map((artist) => artist.name).join(', ');
   }
 
   formatNumber(num: number): string {

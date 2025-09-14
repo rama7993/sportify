@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpotifyService, Track } from '../../../services/spotify.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -22,7 +28,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   isMuted = false;
   isShuffled = false;
   repeatMode: 'none' | 'one' | 'all' = 'none';
-  
+
   private destroy$ = new Subject<void>();
 
   constructor(private spotifyService: SpotifyService) {}
@@ -39,7 +45,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   private subscribeToPlayerState(): void {
     this.spotifyService.currentTrack$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(track => {
+      .subscribe((track) => {
         this.currentTrack = track;
         if (track && this.audioElement) {
           this.loadTrack(track);
@@ -48,7 +54,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
     this.spotifyService.isPlaying$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(playing => {
+      .subscribe((playing) => {
         this.isPlaying = playing;
         if (this.audioElement) {
           if (playing) {
@@ -122,7 +128,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   seekTo(event: Event): void {
     const target = event.target as HTMLInputElement;
     const seekTime = parseFloat(target.value);
-    
+
     if (this.audioElement) {
       this.audioElement.nativeElement.currentTime = seekTime;
       this.currentTime = seekTime;
@@ -132,7 +138,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   setVolume(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.volume = parseFloat(target.value);
-    
+
     if (this.audioElement) {
       this.audioElement.nativeElement.volume = this.volume;
     }
@@ -140,7 +146,7 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
   toggleMute(): void {
     this.isMuted = !this.isMuted;
-    
+
     if (this.audioElement) {
       this.audioElement.nativeElement.muted = this.isMuted;
     }
@@ -171,11 +177,13 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0 ? images[0].url : 'assets/placeholder-album.png';
+    return images && images.length > 0
+      ? images[0].url
+      : 'assets/placeholder-album.png';
   }
 
   getArtistNames(artists: any[]): string {
-    return artists.map(artist => artist.name).join(', ');
+    return artists.map((artist) => artist.name).join(', ');
   }
 
   // Expose Math to template
