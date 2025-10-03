@@ -5,12 +5,20 @@
 }
 
 .track-header {
-  background: linear-gradient(135deg, rgba(29, 185, 84, 0.8) 0%, rgba(30, 215, 96, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(29, 185, 84, 0.8) 0%,
+    rgba(30, 215, 96, 0.8) 100%
+  );
   padding: 3rem 0;
   margin-bottom: 2rem;
-  
+
   &.loading {
-    background: linear-gradient(135deg, rgba(30, 60, 114, 0.8) 0%, rgba(42, 82, 152, 0.8) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(30, 60, 114, 0.8) 0%,
+      rgba(42, 82, 152, 0.8) 100%
+    );
   }
 }
 
@@ -25,7 +33,7 @@
 .track-image {
   position: relative;
   flex-shrink: 0;
-  
+
   img {
     width: 200px;
     height: 200px;
@@ -34,7 +42,7 @@
     border: 4px solid white;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   }
-  
+
   .play-overlay {
     position: absolute;
     top: 0;
@@ -49,13 +57,13 @@
     opacity: 0;
     transition: opacity 0.3s ease;
     cursor: pointer;
-    
+
     i {
       font-size: 3rem;
       color: white;
     }
   }
-  
+
   &:hover .play-overlay {
     opacity: 1;
   }
@@ -63,54 +71,54 @@
 
 .track-details {
   flex: 1;
-  
+
   .track-name {
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 1rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   }
-  
+
   .track-artist {
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
-    
+
     a {
       color: white;
       text-decoration: none;
-      
+
       &:hover {
         text-decoration: underline;
       }
     }
   }
-  
+
   .track-album {
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
-    
+
     a {
       color: rgba(255, 255, 255, 0.9);
       text-decoration: none;
-      
+
       &:hover {
         color: white;
         text-decoration: underline;
       }
     }
   }
-  
+
   .track-meta {
     display: flex;
     gap: 2rem;
     flex-wrap: wrap;
-    
+
     .meta-item {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       font-size: 1rem;
-      
+
       i {
         color: white;
         font-size: 1.1rem;
@@ -134,7 +142,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   i {
     font-size: 1.2rem;
   }
@@ -159,7 +167,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  
+
   .player-image {
     img {
       width: 80px;
@@ -168,14 +176,14 @@
       object-fit: cover;
     }
   }
-  
+
   .player-details {
     h4 {
       color: white;
       font-weight: 600;
       margin: 0 0 0.25rem 0;
     }
-    
+
     p {
       color: rgba(255, 255, 255, 0.7);
       margin: 0;
@@ -186,7 +194,7 @@
 .player-controls {
   display: flex;
   justify-content: center;
-  
+
   .play-btn {
     background: linear-gradient(45deg, #1db954, #1ed760);
     border: none;
@@ -198,7 +206,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 20px rgba(29, 185, 84, 0.3);
-    
+
     &:hover {
       transform: scale(1.05);
       box-shadow: 0 6px 25px rgba(29, 185, 84, 0.4);
@@ -220,13 +228,13 @@
   text-align: center;
   padding: 2rem;
   color: rgba(255, 255, 255, 0.7);
-  
+
   i {
     font-size: 2rem;
     margin-bottom: 1rem;
     color: #ffc107;
   }
-  
+
   p {
     margin: 0;
     font-size: 1.1rem;
@@ -250,7 +258,7 @@
   align-items: center;
   gap: 1rem;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
@@ -267,7 +275,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  
+
   i {
     color: white;
     font-size: 1.2rem;
@@ -276,7 +284,7 @@
 
 .detail-content {
   flex: 1;
-  
+
   h5 {
     color: #1db954;
     font-weight: 600;
@@ -285,16 +293,16 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
   p {
     color: white;
     margin: 0;
     font-size: 1rem;
-    
+
     a {
       color: white;
       text-decoration: none;
-      
+
       &:hover {
         color: #1db954;
         text-decoration: underline;
@@ -313,7 +321,7 @@
   display: flex;
   gap: 2rem;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
@@ -323,7 +331,7 @@
 
 .album-image {
   flex-shrink: 0;
-  
+
   img {
     width: 150px;
     height: 150px;
@@ -338,41 +346,41 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  
+
   .album-name {
     margin-bottom: 0.5rem;
-    
+
     a {
       color: white;
       text-decoration: none;
       font-weight: 600;
       font-size: 1.5rem;
-      
+
       &:hover {
         color: #1db954;
       }
     }
   }
-  
+
   .album-artist {
     color: rgba(255, 255, 255, 0.8);
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .album-year {
     color: #1db954;
     font-size: 1rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .album-type {
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     text-transform: capitalize;
     margin-bottom: 1.5rem;
   }
-  
+
   .album-actions {
     .btn {
       background: linear-gradient(45deg, #1db954, #1ed760);
@@ -386,7 +394,7 @@
       align-items: center;
       gap: 0.5rem;
       transition: all 0.3s ease;
-      
+
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
@@ -400,13 +408,13 @@
 .loading-container {
   text-align: center;
   padding: 4rem 0;
-  
+
   .spinner-border {
     width: 3rem;
     height: 3rem;
     margin-bottom: 1rem;
   }
-  
+
   p {
     color: rgba(255, 255, 255, 0.8);
     font-size: 1.1rem;
@@ -416,24 +424,24 @@
 .error-container {
   text-align: center;
   padding: 4rem 0;
-  
+
   .error-content {
     i {
       font-size: 4rem;
       color: #ffc107;
       margin-bottom: 1rem;
     }
-    
+
     h3 {
       color: white;
       margin-bottom: 1rem;
     }
-    
+
     p {
       color: rgba(255, 255, 255, 0.7);
       margin-bottom: 2rem;
     }
-    
+
     .btn {
       background: linear-gradient(45deg, #1db954, #1ed760);
       border: none;
@@ -446,7 +454,7 @@
       align-items: center;
       gap: 0.5rem;
       transition: all 0.3s ease;
-      
+
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
@@ -463,31 +471,31 @@
     text-align: center;
     gap: 1.5rem;
   }
-  
+
   .track-image img {
     width: 150px;
     height: 150px;
   }
-  
+
   .track-details .track-name {
     font-size: 2rem;
   }
-  
+
   .track-details .track-meta {
     justify-content: center;
     gap: 1rem;
   }
-  
+
   .track-details-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .album-card {
     flex-direction: column;
     text-align: center;
     gap: 1.5rem;
   }
-  
+
   .album-image img {
     width: 120px;
     height: 120px;
@@ -498,34 +506,34 @@
   .track-header {
     padding: 2rem 0;
   }
-  
+
   .track-details .track-name {
     font-size: 1.5rem;
   }
-  
+
   .track-details .track-artist {
     font-size: 1.1rem;
   }
-  
+
   .track-details .track-album {
     font-size: 1rem;
   }
-  
+
   .track-details .track-meta {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .audio-player-section {
     padding: 1.5rem;
   }
-  
+
   .player-info {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
   }
-  
+
   .detail-card {
     flex-direction: column;
     text-align: center;

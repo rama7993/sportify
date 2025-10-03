@@ -17,17 +17,20 @@ export class ArtistComponent implements OnInit, OnDestroy {
   topTracks: Track[] = [];
   albums: any[] = [];
   relatedArtists: any[] = [];
-  
+
   loading = {
     artist: true,
     topTracks: true,
     albums: true,
-    relatedArtists: true
+    relatedArtists: true,
   };
-  
+
   private destroy$ = new Subject<void>();
 
-  constructor(private route: ActivatedRoute, private spotifyService: SpotifyService) {
+  constructor(
+    private route: ActivatedRoute,
+    private spotifyService: SpotifyService
+  ) {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
       if (this.id) {
@@ -53,7 +56,8 @@ export class ArtistComponent implements OnInit, OnDestroy {
   }
 
   private loadArtist(): void {
-    this.spotifyService.getArtists(this.id)
+    this.spotifyService
+      .getArtists(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -63,12 +67,13 @@ export class ArtistComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error loading artist', err);
           this.loading.artist = false;
-        }
+        },
       });
   }
 
   private loadTopTracks(): void {
-    this.spotifyService.getArtistTopTracks(this.id)
+    this.spotifyService
+      .getArtistTopTracks(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -78,12 +83,13 @@ export class ArtistComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error loading top tracks', err);
           this.loading.topTracks = false;
-        }
+        },
       });
   }
 
   private loadAlbums(): void {
-    this.spotifyService.getArtistAlbums(this.id, 12, 0)
+    this.spotifyService
+      .getArtistAlbums(this.id, 12, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -93,22 +99,25 @@ export class ArtistComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error loading albums', err);
           this.loading.albums = false;
-        }
+        },
       });
   }
 
   private loadRelatedArtists(): void {
-    this.spotifyService.getRelatedArtists(this.id)
+    this.spotifyService
+      .getRelatedArtists(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.relatedArtists = response.artists || [];
+          this.relatedArtists = Array.isArray(response)
+            ? response
+            : response.artists || [];
           this.loading.relatedArtists = false;
         },
         error: (err) => {
           console.error('Error loading related artists', err);
           this.loading.relatedArtists = false;
-        }
+        },
       });
   }
 
@@ -123,7 +132,9 @@ export class ArtistComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0 ? images[0].url : 'assets/placeholder-album.png';
+    return images && images.length > 0
+      ? images[0].url
+      : 'assets/placeholder-album.png';
   }
 
   formatNumber(num: number): string {

@@ -5,59 +5,41 @@
       <div class="hero-content">
         <h1 class="hero-title">🎵 Welcome to Sportify 🎵</h1>
         <p class="hero-subtitle">
-          Discover new music, create playlists, and enjoy your favorite tracks
+          Your ultimate music discovery platform. Explore new releases, trending
+          artists, and personalized recommendations powered by Spotify's vast
+          music library.
         </p>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <i class="fas fa-music"></i>
+            <span>Millions of Songs</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-users"></i>
+            <span>Top Artists</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-fire"></i>
+            <span>Trending Now</span>
+          </div>
+        </div>
         <div class="hero-actions">
           <a routerLink="/search" class="btn btn-primary btn-lg">
-            <i class="fas fa-search"></i> Search Music
+            <i class="fas fa-search"></i> Explore Music
           </a>
-          <button
+          <a
+            routerLink="/search"
+            [queryParams]="{ q: 'trending', type: 'track' }"
             class="btn btn-outline-light btn-lg"
-            (click)="loadRecommendations()"
           >
-            <i class="fas fa-magic"></i> Get Recommendations
-          </button>
+            <i class="fas fa-fire"></i> Trending Now
+          </a>
         </div>
       </div>
     </div>
   </div>
 
   <div class="container">
-    <!-- Featured Playlists -->
-    <section
-      class="section"
-      *ngIf="!loading.featured || featuredPlaylists.length > 0"
-    >
-      <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-star"></i> Featured Playlists
-        </h2>
-        <a routerLink="/search" class="section-link">View All</a>
-      </div>
-
-      <div class="loading-container" *ngIf="loading.featured">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-
-      <div class="playlist-grid" *ngIf="!loading.featured">
-        <div class="playlist-card" *ngFor="let playlist of featuredPlaylists">
-          <div class="playlist-image">
-            <img [src]="getImageUrl(playlist.images)" [alt]="playlist.name" />
-            <div class="play-overlay">
-              <i class="fas fa-play"></i>
-            </div>
-          </div>
-          <div class="playlist-info">
-            <h5 class="playlist-name">{{ playlist.name }}</h5>
-            <p class="playlist-description">{{ playlist.description }}</p>
-            <p class="playlist-tracks">{{ playlist.tracks.total }} tracks</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- New Releases -->
     <section
       class="section"
@@ -65,7 +47,12 @@
     >
       <div class="section-header">
         <h2 class="section-title"><i class="fas fa-music"></i> New Releases</h2>
-        <a routerLink="/search" class="section-link">View All</a>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          (click)="viewAllAlbums()"
+        >
+          View All
+        </button>
       </div>
 
       <div class="loading-container" *ngIf="loading.newReleases">
@@ -75,20 +62,75 @@
       </div>
 
       <div class="album-grid" *ngIf="!loading.newReleases">
-        <div class="album-card" *ngFor="let album of newReleases">
+        <div
+          class="album-card"
+          *ngFor="let album of newReleases"
+          (click)="viewAlbum(album)"
+        >
           <div class="album-image">
             <img [src]="getImageUrl(album.images)" [alt]="album.name" />
-            <div class="play-overlay" (click)="playTrack(album)">
-              <i class="fas fa-play"></i>
+            <div
+              class="play-overlay"
+              (click)="playAlbumPreview(album); $event.stopPropagation()"
+            >
+              <i
+                class="fas"
+                [class.fa-play]="playingAlbumId !== album.id"
+                [class.fa-spinner]="playingAlbumId === album.id"
+                [class.fa-spin]="playingAlbumId === album.id"
+              ></i>
             </div>
           </div>
           <div class="album-info">
-            <h5 class="album-name">
-              <a [routerLink]="['/album', album.id]">{{ album.name }}</a>
-            </h5>
+            <h5 class="album-name">{{ album.name }}</h5>
             <p class="album-artist">{{ album.artists[0].name }}</p>
             <p class="album-date">
               {{ album.release_date | date : "MMM yyyy" }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Artists -->
+    <section
+      class="section"
+      *ngIf="!loading.artists || trendingArtists.length > 0"
+    >
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-users"></i> Trending Artists
+        </h2>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          (click)="viewAllArtists()"
+        >
+          View All
+        </button>
+      </div>
+
+      <div class="loading-container" *ngIf="loading.artists">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div class="artist-grid" *ngIf="!loading.artists">
+        <div
+          class="artist-card"
+          *ngFor="let artist of trendingArtists"
+          (click)="viewArtist(artist)"
+        >
+          <div class="artist-image">
+            <img [src]="getImageUrl(artist.images)" [alt]="artist.name" />
+            <div class="play-overlay">
+              <i class="fas fa-music"></i>
+            </div>
+          </div>
+          <div class="artist-info">
+            <h5 class="artist-name">{{ artist.name }}</h5>
+            <p class="artist-followers">
+              {{ formatNumber(artist.followers?.total) }} followers
             </p>
           </div>
         </div>
@@ -102,9 +144,14 @@
     >
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fas fa-tags"></i> Browse by Category
+          <i class="fas fa-th-large"></i> Browse by Category
         </h2>
-        <a routerLink="/search" class="section-link">View All</a>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          (click)="viewAllCategories()"
+        >
+          View All
+        </button>
       </div>
 
       <div class="loading-container" *ngIf="loading.categories">
@@ -114,9 +161,16 @@
       </div>
 
       <div class="category-grid" *ngIf="!loading.categories">
-        <div class="category-card" *ngFor="let category of categories">
+        <div
+          class="category-card"
+          *ngFor="let category of categories"
+          (click)="viewCategory(category)"
+        >
           <div class="category-image">
             <img [src]="getImageUrl(category.icons)" [alt]="category.name" />
+            <div class="play-overlay">
+              <i class="fas fa-music"></i>
+            </div>
           </div>
           <div class="category-info">
             <h5 class="category-name">{{ category.name }}</h5>
@@ -126,20 +180,29 @@
     </section>
 
     <!-- Recommendations -->
-    <section
-      class="section"
-      *ngIf="!loading.recommendations || recommendations.length > 0"
-    >
+    <section class="section">
       <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-magic"></i> Recommended for You
-        </h2>
-        <button
-          class="btn btn-outline-primary btn-sm"
-          (click)="loadRecommendations()"
-        >
-          <i class="fas fa-refresh"></i> Refresh
-        </button>
+        <h2 class="section-title"><i class="fas fa-fire"></i> Trending Now</h2>
+        <div class="section-actions">
+          <button
+            class="btn btn-outline-primary btn-sm"
+            (click)="viewAllRecommendations()"
+            title="View all trending tracks"
+          >
+            View All
+          </button>
+          <button
+            class="btn btn-outline-primary btn-sm"
+            (click)="refreshRecommendations()"
+            [disabled]="loading.recommendations"
+            title="Load new recommendations"
+          >
+            <i
+              class="fas fa-sync-alt"
+              [class.fa-spin]="loading.recommendations"
+            ></i>
+          </button>
+        </div>
       </div>
 
       <div class="loading-container" *ngIf="loading.recommendations">
@@ -148,7 +211,10 @@
         </div>
       </div>
 
-      <div class="track-grid" *ngIf="!loading.recommendations">
+      <div
+        class="track-grid"
+        *ngIf="!loading.recommendations && recommendations.length > 0"
+      >
         <div class="track-card" *ngFor="let track of recommendations">
           <div class="track-image">
             <img
@@ -184,6 +250,17 @@
             </p>
           </div>
         </div>
+      </div>
+
+      <div
+        class="no-content"
+        *ngIf="
+          !loading.recommendations &&
+          recommendations.length === 0 &&
+          !recommendationsLoaded
+        "
+      >
+        <p>Discover trending music below...</p>
       </div>
     </section>
   </div>

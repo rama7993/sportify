@@ -46,7 +46,7 @@
   padding: 1rem 1.5rem;
   font-size: 1.1rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  
+
   &:focus {
     background: white;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
@@ -61,7 +61,7 @@
   padding: 1rem 2rem;
   font-weight: 600;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
@@ -80,11 +80,11 @@
     border-color: #1db954;
     color: white;
   }
-  
+
   .btn-outline-primary {
     border-color: rgba(255, 255, 255, 0.3);
     color: white;
-    
+
     &:hover {
       background: rgba(255, 255, 255, 0.1);
       border-color: rgba(255, 255, 255, 0.5);
@@ -95,10 +95,16 @@
 .results-summary {
   text-align: center;
   margin-bottom: 2rem;
-  
+
   h3 {
     color: #1db954;
     font-weight: 600;
+
+    .load-more-indicator {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
   }
 }
 
@@ -113,7 +119,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   i {
     font-size: 1.2rem;
   }
@@ -130,7 +136,7 @@
   transition: all 0.3s ease;
   display: flex;
   gap: 1rem;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -141,14 +147,14 @@
 .track-image {
   position: relative;
   flex-shrink: 0;
-  
+
   img {
     width: 80px;
     height: 80px;
     border-radius: 10px;
     object-fit: cover;
   }
-  
+
   .play-overlay {
     position: absolute;
     top: 0;
@@ -163,13 +169,13 @@
     opacity: 0;
     transition: opacity 0.3s ease;
     cursor: pointer;
-    
+
     i {
       font-size: 1.5rem;
       color: white;
     }
   }
-  
+
   &:hover .play-overlay {
     opacity: 1;
   }
@@ -177,57 +183,57 @@
 
 .track-info {
   flex: 1;
-  
+
   .track-name {
     color: white;
     font-weight: 600;
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
   }
-  
+
   .track-artist {
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 0.3rem;
-    
+
     a {
       color: #1db954;
       text-decoration: none;
-      
+
       &:hover {
         text-decoration: underline;
       }
     }
   }
-  
+
   .track-album {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .track-details {
     display: flex;
     gap: 1rem;
     margin-bottom: 0.5rem;
-    
+
     .track-duration {
       color: rgba(255, 255, 255, 0.7);
       font-size: 0.8rem;
     }
-    
+
     .track-popularity {
       color: #1db954;
       font-size: 0.8rem;
       font-weight: 600;
     }
   }
-  
+
   .track-preview {
     width: 100%;
     height: 32px;
     margin-top: 0.5rem;
   }
-  
+
   .no-preview {
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.8rem;
@@ -246,7 +252,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
   height: 100%;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -256,7 +262,7 @@
 
 .artist-image {
   margin-bottom: 1rem;
-  
+
   img {
     width: 120px;
     height: 120px;
@@ -269,24 +275,24 @@
 .artist-info {
   .artist-name {
     margin-bottom: 0.5rem;
-    
+
     a {
       color: white;
       text-decoration: none;
       font-weight: 600;
-      
+
       &:hover {
         color: #1db954;
       }
     }
   }
-  
+
   .artist-followers {
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
   }
-  
+
   .artist-genres {
     color: #1db954;
     font-size: 0.8rem;
@@ -304,7 +310,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
   height: 100%;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -314,7 +320,7 @@
 
 .album-image {
   margin-bottom: 1rem;
-  
+
   img {
     width: 120px;
     height: 120px;
@@ -327,24 +333,24 @@
 .album-info {
   .album-name {
     margin-bottom: 0.5rem;
-    
+
     a {
       color: white;
       text-decoration: none;
       font-weight: 600;
-      
+
       &:hover {
         color: #1db954;
       }
     }
   }
-  
+
   .album-artist {
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     margin-bottom: 0.3rem;
   }
-  
+
   .album-year {
     color: #1db954;
     font-size: 0.8rem;
@@ -362,7 +368,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
   height: 100%;
-  
+
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -372,7 +378,7 @@
 
 .playlist-image {
   margin-bottom: 1rem;
-  
+
   img {
     width: 120px;
     height: 120px;
@@ -388,13 +394,13 @@
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
-  
+
   .playlist-owner {
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
     margin-bottom: 0.3rem;
   }
-  
+
   .playlist-tracks {
     color: #1db954;
     font-size: 0.8rem;
@@ -416,12 +422,12 @@
   border-radius: 25px;
   font-weight: 600;
   transition: all 0.3s ease;
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -432,13 +438,13 @@
 .loading-container {
   text-align: center;
   padding: 3rem 0;
-  
+
   .spinner-border {
     width: 3rem;
     height: 3rem;
     margin-bottom: 1rem;
   }
-  
+
   p {
     color: rgba(255, 255, 255, 0.8);
     font-size: 1.1rem;
@@ -449,19 +455,19 @@
 .no-results {
   text-align: center;
   padding: 4rem 0;
-  
+
   .no-results-content {
     i {
       font-size: 4rem;
       color: rgba(255, 255, 255, 0.3);
       margin-bottom: 1rem;
     }
-    
+
     h3 {
       color: white;
       margin-bottom: 1rem;
     }
-    
+
     p {
       color: rgba(255, 255, 255, 0.7);
       font-size: 1.1rem;
@@ -474,24 +480,24 @@
   .search-title {
     font-size: 2rem;
   }
-  
+
   .search-subtitle {
     font-size: 1rem;
   }
-  
+
   .search-form {
     padding: 1.5rem;
   }
-  
+
   .track-card {
     flex-direction: column;
     text-align: center;
-    
+
     .track-image {
       align-self: center;
     }
   }
-  
+
   .search-filters {
     .btn-group {
       flex-wrap: wrap;
@@ -504,20 +510,20 @@
   .search-header {
     padding: 2rem 0;
   }
-  
+
   .search-title {
     font-size: 1.5rem;
   }
-  
+
   .search-form {
     padding: 1rem;
   }
-  
+
   .search-input {
     font-size: 1rem;
     padding: 0.8rem 1rem;
   }
-  
+
   .search-btn {
     padding: 0.8rem 1.5rem;
   }

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { SpotifyService } from '../../../services/spotify.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -12,23 +12,29 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  featuredPlaylists: any[] = [];
   newReleases: any[] = [];
-  categories: any[] = [];
+  trendingArtists: any[] = [];
   recommendations: any[] = [];
+  categories: any[] = [];
+  recommendationsLoaded = false;
   loading = {
-    featured: true,
     newReleases: true,
+    artists: true,
+    recommendations: true,
     categories: true,
-    recommendations: true
   };
-  
+  playingAlbumId: string | null = null;
+
   private destroy$ = new Subject<void>();
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(private spotifyService: SpotifyService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
+    // Load recommendations automatically after a short delay
+    setTimeout(() => {
+      this.loadRecommendations();
+    }, 1000);
   }
 
   ngOnDestroy(): void {
@@ -37,56 +43,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadDashboardData(): void {
-    this.loadFeaturedPlaylists();
+    // Load real data from Spotify API using proper endpoints
     this.loadNewReleases();
+    this.loadTrendingArtists();
     this.loadCategories();
-    this.loadRecommendations();
-  }
 
-  private loadFeaturedPlaylists(): void {
-    this.spotifyService.getFeaturedPlaylists(12, 0)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.featuredPlaylists = response.playlists?.items || [];
-          this.loading.featured = false;
-        },
-        error: (err) => {
-          console.error('Error loading featured playlists', err);
-          this.loadMockPlaylists();
-          this.loading.featured = false;
-        }
-      });
-  }
-
-  private loadMockPlaylists(): void {
-    this.featuredPlaylists = [
-      {
-        id: '1',
-        name: 'Today\'s Top Hits',
-        description: 'The most played songs right now',
-        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Top+Hits' }],
-        tracks: { total: 50 }
-      },
-      {
-        id: '2',
-        name: 'Discover Weekly',
-        description: 'Your weekly mixtape of fresh music',
-        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Discover' }],
-        tracks: { total: 30 }
-      },
-      {
-        id: '3',
-        name: 'Chill Hits',
-        description: 'Kick back to the best new and recent chill hits',
-        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Chill' }],
-        tracks: { total: 40 }
-      }
-    ];
+    // Load recommendations automatically after a short delay
+    setTimeout(() => {
+      this.loadRecommendations();
+    }, 1000);
   }
 
   private loadNewReleases(): void {
-    this.spotifyService.getNewReleases(12, 0)
+    // Use Spotify's new releases API
+    this.spotifyService
+      .getNewReleases(8, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -95,43 +66,107 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Error loading new releases', err);
-          this.loadMockAlbums();
+          this.newReleases = [];
           this.loading.newReleases = false;
-        }
+        },
       });
   }
 
-  private loadMockAlbums(): void {
-    this.newReleases = [
-      {
-        id: '1',
-        name: 'Future Nostalgia',
-        artists: [{ name: 'Dua Lipa' }],
-        release_date: '2020-03-27',
-        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Future+Nostalgia' }],
-        album_type: 'album'
-      },
-      {
-        id: '2',
-        name: 'After Hours',
-        artists: [{ name: 'The Weeknd' }],
-        release_date: '2020-03-20',
-        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=After+Hours' }],
-        album_type: 'album'
-      },
-      {
-        id: '3',
-        name: 'Fine Line',
-        artists: [{ name: 'Harry Styles' }],
-        release_date: '2019-12-13',
-        images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Fine+Line' }],
-        album_type: 'album'
-      }
-    ];
+  private loadTrendingArtists(): void {
+    // Search for popular artists using multiple queries to get diverse results
+    this.spotifyService
+      .search({ query: 'top artists', type: 'artist', limit: 4 })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const artists1 = response.artists?.items || [];
+
+          // Get more artists with different search terms
+          this.spotifyService
+            .search({ query: 'trending artists', type: 'artist', limit: 4 })
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response2) => {
+                const artists2 = response2.artists?.items || [];
+                // Combine and deduplicate artists
+                const allArtists = [...artists1, ...artists2];
+                this.trendingArtists = allArtists
+                  .filter(
+                    (artist, index, self) =>
+                      index === self.findIndex((a) => a.id === artist.id)
+                  )
+                  .slice(0, 8);
+                this.loading.artists = false;
+              },
+              error: (err) => {
+                console.error('Error loading additional artists', err);
+                this.trendingArtists = artists1.slice(0, 8);
+                this.loading.artists = false;
+              },
+            });
+        },
+        error: (err) => {
+          console.error('Error loading trending artists', err);
+          this.trendingArtists = [];
+          this.loading.artists = false;
+        },
+      });
+  }
+
+  loadRecommendations(): void {
+    this.loading.recommendations = true;
+
+    // Use Spotify's recommendations API with popular genres
+    this.spotifyService
+      .getRecommendations(
+        undefined, // no seed tracks
+        undefined, // no seed artists
+        ['pop', 'rock', 'hip-hop', 'electronic'], // seed genres
+        6
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.recommendations = response.tracks || [];
+          this.loading.recommendations = false;
+          this.recommendationsLoaded = true;
+        },
+        error: (err) => {
+          console.error('Error loading recommendations', err);
+          // Fallback to search if recommendations fail
+          this.loadRecommendationsFallback();
+        },
+      });
+  }
+
+  private loadRecommendationsFallback(): void {
+    // Fallback to search-based recommendations
+    this.spotifyService
+      .search({ query: 'trending', type: 'track', limit: 6 })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.recommendations = response.tracks?.items || [];
+          this.loading.recommendations = false;
+          this.recommendationsLoaded = true;
+        },
+        error: (err) => {
+          console.error('Error loading recommendations fallback', err);
+          this.recommendations = [];
+          this.loading.recommendations = false;
+          this.recommendationsLoaded = true;
+        },
+      });
+  }
+
+  refreshRecommendations(): void {
+    this.loadRecommendations();
   }
 
   private loadCategories(): void {
-    this.spotifyService.getCategories(12, 0)
+    // Load music categories for discovery
+    this.spotifyService
+      .getCategories(8, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -140,130 +175,52 @@ export class DashboardComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Error loading categories', err);
-          this.loadMockCategories();
+          this.categories = [];
           this.loading.categories = false;
-        }
+        },
       });
-  }
-
-  private loadMockCategories(): void {
-    this.categories = [
-      {
-        id: 'pop',
-        name: 'Pop',
-        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Pop' }]
-      },
-      {
-        id: 'rock',
-        name: 'Rock',
-        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Rock' }]
-      },
-      {
-        id: 'electronic',
-        name: 'Electronic',
-        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Electronic' }]
-      },
-      {
-        id: 'hip-hop',
-        name: 'Hip-Hop',
-        icons: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Hip-Hop' }]
-      }
-    ];
-  }
-
-  loadRecommendations(): void {
-    // First get some popular tracks to use as seeds for recommendations
-    this.spotifyService.search({
-      query: 'popular music',
-      type: 'track',
-      limit: 5,
-      offset: 0
-    })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (searchResponse) => {
-          const seedTracks = searchResponse.tracks?.items?.slice(0, 5).map((track: any) => track.id) || [];
-          
-          if (seedTracks.length > 0) {
-            // Use the popular tracks as seeds for recommendations
-            this.spotifyService.getRecommendations(seedTracks, [], ['pop', 'rock'], 12)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                next: (response) => {
-                  this.recommendations = response.tracks || [];
-                  this.loading.recommendations = false;
-                },
-                error: (err) => {
-                  console.error('Error loading recommendations', err);
-                  this.loadMockRecommendations();
-                  this.loading.recommendations = false;
-                }
-              });
-          } else {
-            // Fallback to mock recommendations
-            this.loadMockRecommendations();
-            this.loading.recommendations = false;
-          }
-        },
-        error: (err) => {
-          console.error('Error loading seed tracks for recommendations', err);
-          this.loadMockRecommendations();
-          this.loading.recommendations = false;
-        }
-      });
-  }
-
-  private loadMockRecommendations(): void {
-    // Mock recommendations as fallback
-    this.recommendations = [
-      {
-        id: '1',
-        name: 'Blinding Lights',
-        artists: [{ id: '1', name: 'The Weeknd' }],
-        album: { 
-          id: '1', 
-          name: 'After Hours', 
-          images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=After+Hours' }] 
-        },
-        duration_ms: 200000,
-        popularity: 95,
-        preview_url: null
-      },
-      {
-        id: '2',
-        name: 'Levitating',
-        artists: [{ id: '2', name: 'Dua Lipa' }],
-        album: { 
-          id: '2', 
-          name: 'Future Nostalgia', 
-          images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Future+Nostalgia' }] 
-        },
-        duration_ms: 203000,
-        popularity: 90,
-        preview_url: null
-      },
-      {
-        id: '3',
-        name: 'Watermelon Sugar',
-        artists: [{ id: '3', name: 'Harry Styles' }],
-        album: { 
-          id: '3', 
-          name: 'Fine Line', 
-          images: [{ url: 'https://via.placeholder.com/300x300/1db954/ffffff?text=Fine+Line' }] 
-        },
-        duration_ms: 174000,
-        popularity: 88,
-        preview_url: null
-      }
-    ];
   }
 
   playTrack(track: any): void {
     this.spotifyService.playTrack(track);
   }
 
+  playAlbumPreview(album: any): void {
+    this.playingAlbumId = album.id;
+
+    // Get the first track from the album and play it
+    this.spotifyService
+      .getAlbumTracks(album.id, 1, 0)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const tracks = response.items || [];
+          if (tracks.length > 0) {
+            // Create a track object with album info
+            const track = {
+              ...tracks[0],
+              album: {
+                ...album,
+                images: album.images,
+              },
+            };
+            this.spotifyService.playTrack(track);
+          } else {
+            console.log('No tracks available for this album');
+          }
+          this.playingAlbumId = null;
+        },
+        error: (err) => {
+          console.error('Error loading album tracks', err);
+          this.playingAlbumId = null;
+        },
+      });
+  }
+
   getImageUrl(images: any[]): string {
-    return images && images.length > 0 ? images[0].url : 'assets/placeholder-album.png';
+    return images && images.length > 0
+      ? images[0].url
+      : 'assets/placeholder-album.png';
   }
 
   formatDuration(ms: number): string {
@@ -281,5 +238,55 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return (num / 1000).toFixed(1) + 'K';
     }
     return num.toString();
+  }
+
+  // Navigation methods
+  viewAllAlbums(): void {
+    // Navigate to search with album filter for new releases
+    this.router.navigate(['/search'], {
+      queryParams: { q: 'new album 2024', type: 'album' },
+    });
+  }
+
+  viewAllArtists(): void {
+    // Navigate to search with artist filter for trending artists
+    this.router.navigate(['/search'], {
+      queryParams: { q: 'popular artists', type: 'artist' },
+    });
+  }
+
+  viewAllCategories(): void {
+    // Navigate to search with categories
+    this.router.navigate(['/search'], {
+      queryParams: { q: 'music genres', type: 'playlist' },
+    });
+  }
+
+  viewAllRecommendations(): void {
+    // Navigate to search with trending tracks
+    this.router.navigate(['/search'], {
+      queryParams: { q: 'trending music', type: 'track' },
+    });
+  }
+
+  viewAlbum(album: any): void {
+    // Navigate to album details
+    this.router.navigate(['/album', album.id]);
+  }
+
+  viewArtist(artist: any): void {
+    // Navigate to artist details
+    this.router.navigate(['/artist', artist.id]);
+  }
+
+  viewCategory(category: any): void {
+    // Navigate to category playlists
+    this.router.navigate(['/search'], {
+      queryParams: { q: category.name, type: 'playlist' },
+    });
+  }
+
+  isAlbumPlaying(albumId: string): boolean {
+    return this.playingAlbumId === albumId;
   }
 }

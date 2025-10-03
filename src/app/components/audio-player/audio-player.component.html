@@ -4,13 +4,15 @@
     <div class="track-info">
       <div class="track-image">
         <img
-          [src]="getImageUrl(currentTrack.album.images)"
-          [alt]="currentTrack.album.name"
+          [src]="getImageUrl(currentTrack?.album?.images)"
+          [alt]="currentTrack?.album?.name || 'Track'"
         />
       </div>
       <div class="track-details">
-        <h5 class="track-name">{{ currentTrack.name }}</h5>
-        <p class="track-artist">{{ getArtistNames(currentTrack.artists) }}</p>
+        <h5 class="track-name">{{ currentTrack?.name || "Unknown Track" }}</h5>
+        <p class="track-artist">
+          {{ getArtistNames(currentTrack?.artists || []) }}
+        </p>
       </div>
     </div>
 

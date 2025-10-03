@@ -25,8 +25,32 @@ export interface Track {
 }
 
 export interface SearchResponse {
-  tracks: {
+  tracks?: {
     items: Track[];
+    total: number;
+    limit: number;
+    offset: number;
+    next: string | null;
+    previous: string | null;
+  };
+  playlists?: {
+    items: any[];
+    total: number;
+    limit: number;
+    offset: number;
+    next: string | null;
+    previous: string | null;
+  };
+  albums?: {
+    items: any[];
+    total: number;
+    limit: number;
+    offset: number;
+    next: string | null;
+    previous: string | null;
+  };
+  artists?: {
+    items: any[];
     total: number;
     limit: number;
     offset: number;
@@ -63,7 +87,7 @@ export class SpotifyService {
       .set('type', options.type || 'track')
       .set('limit', (options.limit || 20).toString())
       .set('offset', (options.offset || 0).toString())
-      .set('market', options.market || 'US');
+      .set('market', options.market || 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -85,7 +109,7 @@ export class SpotifyService {
       .set('type', 'track,artist,album,playlist')
       .set('limit', limit.toString())
       .set('offset', offset.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -138,7 +162,7 @@ export class SpotifyService {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -151,7 +175,7 @@ export class SpotifyService {
   }
 
   // Get artist's top tracks
-  getArtistTopTracks(artistId: string, market: string = 'US'): Observable<any> {
+  getArtistTopTracks(artistId: string, market: string = 'IN'): Observable<any> {
     return this.ensureAccessToken().pipe(
       switchMap(() =>
         this.http.get<any>(`${this.apiUrl}/artists/${artistId}/top-tracks`, {
@@ -185,7 +209,7 @@ export class SpotifyService {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -205,7 +229,7 @@ export class SpotifyService {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -222,7 +246,7 @@ export class SpotifyService {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -239,7 +263,7 @@ export class SpotifyService {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -260,7 +284,7 @@ export class SpotifyService {
     const params = new HttpParams()
       .set('limit', limit.toString())
       .set('offset', offset.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     return this.ensureAccessToken().pipe(
       switchMap(() =>
@@ -284,7 +308,7 @@ export class SpotifyService {
   ): Observable<any> {
     let params = new HttpParams()
       .set('limit', limit.toString())
-      .set('market', 'US');
+      .set('market', 'IN');
 
     if (seedTracks && seedTracks.length > 0) {
       params = params.set('seed_tracks', seedTracks.join(','));

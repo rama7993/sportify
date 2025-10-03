@@ -183,7 +183,10 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   }
 
   getArtistNames(artists: any[]): string {
-    return artists.map((artist) => artist.name).join(', ');
+    if (!artists || !Array.isArray(artists)) {
+      return 'Unknown Artist';
+    }
+    return artists.map((artist) => artist?.name || 'Unknown').join(', ');
   }
 
   // Expose Math to template

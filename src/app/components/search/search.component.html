@@ -3,7 +3,9 @@
   <div class="search-header">
     <div class="container">
       <h1 class="search-title">Discover Music</h1>
-      <p class="search-subtitle">Search for your favorite songs, artists, albums, and playlists</p>
+      <p class="search-subtitle">
+        Search for your favorite songs, artists, albums, and playlists
+      </p>
     </div>
   </div>
 
@@ -22,33 +24,80 @@
                 (input)="onSearchInput()"
                 (keyup.enter)="search()"
               />
-              <button class="btn btn-primary search-btn" type="button" (click)="search()">
+              <button
+                class="btn btn-primary search-btn"
+                type="button"
+                (click)="search()"
+              >
                 <i class="fas fa-search"></i>
               </button>
             </div>
-            
+
             <!-- Search Type Filter -->
             <div class="search-filters">
               <div class="btn-group" role="group">
-                <input type="radio" class="btn-check" name="searchType" id="all" value="all" 
-                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="searchType"
+                  id="all"
+                  value="all"
+                  [(ngModel)]="searchType"
+                  (change)="onSearchTypeChange()"
+                />
                 <label class="btn btn-outline-primary" for="all">All</label>
 
-                <input type="radio" class="btn-check" name="searchType" id="tracks" value="track" 
-                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
-                <label class="btn btn-outline-primary" for="tracks">Tracks</label>
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="searchType"
+                  id="tracks"
+                  value="track"
+                  [(ngModel)]="searchType"
+                  (change)="onSearchTypeChange()"
+                />
+                <label class="btn btn-outline-primary" for="tracks"
+                  >Tracks</label
+                >
 
-                <input type="radio" class="btn-check" name="searchType" id="artists" value="artist" 
-                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
-                <label class="btn btn-outline-primary" for="artists">Artists</label>
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="searchType"
+                  id="artists"
+                  value="artist"
+                  [(ngModel)]="searchType"
+                  (change)="onSearchTypeChange()"
+                />
+                <label class="btn btn-outline-primary" for="artists"
+                  >Artists</label
+                >
 
-                <input type="radio" class="btn-check" name="searchType" id="albums" value="album" 
-                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
-                <label class="btn btn-outline-primary" for="albums">Albums</label>
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="searchType"
+                  id="albums"
+                  value="album"
+                  [(ngModel)]="searchType"
+                  (change)="onSearchTypeChange()"
+                />
+                <label class="btn btn-outline-primary" for="albums"
+                  >Albums</label
+                >
 
-                <input type="radio" class="btn-check" name="searchType" id="playlists" value="playlist" 
-                       [(ngModel)]="searchType" (change)="onSearchTypeChange()">
-                <label class="btn btn-outline-primary" for="playlists">Playlists</label>
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="searchType"
+                  id="playlists"
+                  value="playlist"
+                  [(ngModel)]="searchType"
+                  (change)="onSearchTypeChange()"
+                />
+                <label class="btn btn-outline-primary" for="playlists"
+                  >Playlists</label
+                >
               </div>
             </div>
           </div>
@@ -57,20 +106,26 @@
     </div>
 
     <!-- Results Summary -->
-    <div class="results-summary" *ngIf="totalResults > 0">
-      <h3>Found {{ totalResults }} results</h3>
+    <div class="results-summary" *ngIf="hasLoadedResults()">
+      <h3>
+        Showing {{ loadedResults }} of {{ totalResults }} results
+        <span *ngIf="loadedResults < totalResults" class="load-more-indicator">
+          ({{ totalResults - loadedResults }} more available)
+        </span>
+      </h3>
     </div>
 
     <!-- Tracks Section -->
     <div class="results-section" *ngIf="tracks.length > 0">
-      <h4 class="section-title">
-        <i class="fas fa-music"></i> Tracks
-      </h4>
+      <h4 class="section-title"><i class="fas fa-music"></i> Tracks</h4>
       <div class="row">
         <div class="col-lg-6 col-md-12 mb-3" *ngFor="let track of tracks">
           <div class="track-card">
             <div class="track-image">
-              <img [src]="getImageUrl(track.album.images)" [alt]="track.album.name" />
+              <img
+                [src]="getImageUrl(track.album.images)"
+                [alt]="track.album.name"
+              />
               <div class="play-overlay" (click)="playTrack(track)">
                 <i class="fas fa-play"></i>
               </div>
@@ -78,20 +133,29 @@
             <div class="track-info">
               <h5 class="track-name">{{ track.name }}</h5>
               <p class="track-artist">
-                <a [routerLink]="['/artist', artist.id]" *ngFor="let artist of track.artists; let last = last">
+                <a
+                  [routerLink]="['/artist', artist.id]"
+                  *ngFor="let artist of track.artists; let last = last"
+                >
                   {{ artist.name }}<span *ngIf="!last">, </span>
                 </a>
               </p>
               <p class="track-album">{{ track.album.name }}</p>
               <div class="track-details">
-                <span class="track-duration">{{ formatDuration(track.duration_ms) }}</span>
-                <span class="track-popularity">{{ track.popularity }}% popular</span>
+                <span class="track-duration">{{
+                  formatDuration(track.duration_ms)
+                }}</span>
+                <span class="track-popularity"
+                  >{{ track.popularity }}% popular</span
+                >
               </div>
               <audio controls class="track-preview" *ngIf="track.preview_url">
-                <source [src]="track.preview_url" type="audio/mpeg">
+                <source [src]="track.preview_url" type="audio/mpeg" />
                 Your browser does not support the audio element.
               </audio>
-              <p class="no-preview" *ngIf="!track.preview_url">No preview available</p>
+              <p class="no-preview" *ngIf="!track.preview_url">
+                No preview available
+              </p>
             </div>
           </div>
         </div>
@@ -100,11 +164,12 @@
 
     <!-- Artists Section -->
     <div class="results-section" *ngIf="artists.length > 0">
-      <h4 class="section-title">
-        <i class="fas fa-user"></i> Artists
-      </h4>
+      <h4 class="section-title"><i class="fas fa-user"></i> Artists</h4>
       <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let artist of artists">
+        <div
+          class="col-lg-3 col-md-4 col-sm-6 mb-4"
+          *ngFor="let artist of artists"
+        >
           <div class="artist-card">
             <div class="artist-image">
               <img [src]="getImageUrl(artist.images)" [alt]="artist.name" />
@@ -113,8 +178,12 @@
               <h5 class="artist-name">
                 <a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a>
               </h5>
-              <p class="artist-followers">{{ artist.followers.total | number }} followers</p>
-              <p class="artist-genres">{{ artist.genres.slice(0, 2).join(', ') }}</p>
+              <p class="artist-followers">
+                {{ artist.followers.total | number }} followers
+              </p>
+              <p class="artist-genres">
+                {{ artist.genres.slice(0, 2).join(", ") }}
+              </p>
             </div>
           </div>
         </div>
@@ -123,11 +192,12 @@
 
     <!-- Albums Section -->
     <div class="results-section" *ngIf="albums.length > 0">
-      <h4 class="section-title">
-        <i class="fas fa-compact-disc"></i> Albums
-      </h4>
+      <h4 class="section-title"><i class="fas fa-compact-disc"></i> Albums</h4>
       <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let album of albums">
+        <div
+          class="col-lg-3 col-md-4 col-sm-6 mb-4"
+          *ngFor="let album of albums"
+        >
           <div class="album-card">
             <div class="album-image">
               <img [src]="getImageUrl(album.images)" [alt]="album.name" />
@@ -137,7 +207,7 @@
                 <a [routerLink]="['/album', album.id]">{{ album.name }}</a>
               </h5>
               <p class="album-artist">{{ album.artists[0].name }}</p>
-              <p class="album-year">{{ album.release_date | date:'yyyy' }}</p>
+              <p class="album-year">{{ album.release_date | date : "yyyy" }}</p>
             </div>
           </div>
         </div>
@@ -146,18 +216,24 @@
 
     <!-- Playlists Section -->
     <div class="results-section" *ngIf="playlists.length > 0">
-      <h4 class="section-title">
-        <i class="fas fa-list"></i> Playlists
-      </h4>
+      <h4 class="section-title"><i class="fas fa-list"></i> Playlists</h4>
       <div class="row">
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" *ngFor="let playlist of playlists">
+        <div
+          class="col-lg-3 col-md-4 col-sm-6 mb-4"
+          *ngFor="let playlist of playlists"
+        >
           <div class="playlist-card">
             <div class="playlist-image">
-              <img [src]="getImageUrl(playlist?.images || [])" [alt]="playlist?.name" />
+              <img
+                [src]="getImageUrl(playlist?.images || [])"
+                [alt]="playlist?.name"
+              />
             </div>
             <div class="playlist-info">
               <h5 class="playlist-name">{{ playlist?.name }}</h5>
-              <p class="playlist-owner">by {{ playlist?.owner.display_name }}</p>
+              <p class="playlist-owner">
+                by {{ playlist?.owner.display_name }}
+              </p>
               <p class="playlist-tracks">{{ playlist?.tracks.total }} tracks</p>
             </div>
           </div>
@@ -166,20 +242,24 @@
     </div>
 
     <!-- Load More Button -->
-    <div class="load-more-container" *ngIf="hasMore">
-      <button 
-        class="btn btn-outline-primary load-more-btn" 
-        (click)="loadMore()" 
-        [disabled]="loadingMore">
-        <span *ngIf="!loadingMore">Load More</span>
-        <span *ngIf="loadingMore">
-          <i class="fas fa-spinner fa-spin"></i> Loading...
+    <div
+      class="load-more-container"
+      *ngIf="hasMore && loadingState !== 'searching'"
+    >
+      <button
+        class="btn btn-outline-primary load-more-btn"
+        (click)="loadMore()"
+        [disabled]="loadingState === 'loading-more'"
+      >
+        <span *ngIf="loadingState !== 'loading-more'">Load More</span>
+        <span *ngIf="loadingState === 'loading-more'">
+          <i class="fas fa-spinner fa-spin"></i> Loading more results...
         </span>
       </button>
     </div>
 
     <!-- Loading Spinner -->
-    <div class="loading-container" *ngIf="loading">
+    <div class="loading-container" *ngIf="loadingState === 'searching'">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
@@ -187,7 +267,10 @@
     </div>
 
     <!-- No Results -->
-    <div class="no-results" *ngIf="!loading && totalResults === 0 && query.trim()">
+    <div
+      class="no-results"
+      *ngIf="loadingState === 'idle' && !hasLoadedResults() && query.trim()"
+    >
       <div class="no-results-content">
         <i class="fas fa-search"></i>
         <h3>No results found</h3>
