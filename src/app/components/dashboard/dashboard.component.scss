@@ -54,7 +54,6 @@
       font-size: 2rem;
       color: #fff;
     }
-
     span {
       font-size: 1rem;
       font-weight: 500;
@@ -86,7 +85,6 @@
   &.btn-primary {
     background: linear-gradient(45deg, #1db954, #1ed760);
     border: none;
-
     &:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
@@ -96,7 +94,6 @@
   &.btn-outline-light {
     border: 2px solid white;
     color: white;
-
     &:hover {
       background: white;
       color: #1db954;
@@ -107,7 +104,6 @@
   &.btn-outline-primary {
     border: 2px solid #1db954;
     color: #1db954;
-
     &:hover {
       background: #1db954;
       color: white;
@@ -142,7 +138,6 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
   i {
     font-size: 1.2rem;
   }
@@ -161,7 +156,6 @@
 .loading-container {
   text-align: center;
   padding: 3rem 0;
-
   .spinner-border {
     width: 3rem;
     height: 3rem;
@@ -171,8 +165,7 @@
 // Grid Layouts
 .album-grid,
 .category-grid,
-.artist-grid,
-.track-grid {
+.artist-grid {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -181,17 +174,10 @@
   overflow: hidden;
 }
 
-.track-grid {
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  width: 100%;
-  max-width: 100%;
-}
-
 // Card Styles
 .album-card,
 .category-card,
-.artist-card,
-.track-card {
+.artist-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 15px;
@@ -205,110 +191,6 @@
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     background: rgba(255, 255, 255, 0.15);
-  }
-}
-
-.track-card {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-
-  .track-image {
-    flex-shrink: 0;
-    position: relative;
-
-    img {
-      width: 80px;
-      height: 80px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
-
-    .play-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      cursor: pointer;
-
-      i {
-        font-size: 1.5rem;
-        color: white;
-      }
-    }
-
-    &:hover .play-overlay {
-      opacity: 1;
-    }
-  }
-
-  .track-info {
-    flex: 1;
-
-    .track-name {
-      color: white;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      font-size: 1.1rem;
-    }
-
-    .track-artist {
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 0.3rem;
-
-      a {
-        color: #1db954;
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-
-    .track-album {
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 0.9rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .track-details {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 0.5rem;
-
-      .track-duration {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.8rem;
-      }
-
-      .track-popularity {
-        color: #1db954;
-        font-size: 0.8rem;
-        font-weight: 600;
-      }
-    }
-
-    .track-preview {
-      width: 100%;
-      height: 32px;
-      margin-top: 0.5rem;
-    }
-
-    .no-preview {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 0.8rem;
-      font-style: italic;
-      margin: 0.5rem 0 0 0;
-    }
   }
 }
 
@@ -448,19 +330,6 @@
     img {
       max-width: 100px;
       height: 100px;
-    }
-  }
-
-  .track-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .track-card {
-    flex-direction: column;
-    text-align: center;
-
-    .track-image {
-      align-self: center;
     }
   }
 }

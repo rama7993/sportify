@@ -222,19 +222,23 @@
           class="col-lg-3 col-md-4 col-sm-6 mb-4"
           *ngFor="let playlist of playlists"
         >
-          <div class="playlist-card">
+          <div class="playlist-card" *ngIf="playlist?.name">
             <div class="playlist-image">
               <img
-                [src]="getImageUrl(playlist?.images || [])"
-                [alt]="playlist?.name"
+                [src]="getPlaylistImageUrl(playlist?.images || [])"
+                [alt]="playlist?.name || 'Playlist'"
               />
             </div>
             <div class="playlist-info">
-              <h5 class="playlist-name">{{ playlist?.name }}</h5>
+              <h5 class="playlist-name">
+                {{ playlist?.name || "Unknown Playlist" }}
+              </h5>
               <p class="playlist-owner">
-                by {{ playlist?.owner.display_name }}
+                by {{ playlist?.owner?.display_name || "Unknown Creator" }}
               </p>
-              <p class="playlist-tracks">{{ playlist?.tracks.total }} tracks</p>
+              <p class="playlist-tracks">
+                {{ playlist?.tracks?.total || 0 }} tracks
+              </p>
             </div>
           </div>
         </div>

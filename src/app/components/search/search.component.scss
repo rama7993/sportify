@@ -385,6 +385,22 @@
     border-radius: 10px;
     object-fit: cover;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    // Fallback for broken images
+    &[src=""],
+    &[src="null"] {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::after {
+        content: "🎵";
+        font-size: 2rem;
+        color: white;
+      }
+    }
   }
 }
 

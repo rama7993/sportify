@@ -14,13 +14,10 @@ import { Subject, takeUntil } from 'rxjs';
 export class DashboardComponent implements OnInit, OnDestroy {
   newReleases: any[] = [];
   trendingArtists: any[] = [];
-  recommendations: any[] = [];
   categories: any[] = [];
-  recommendationsLoaded = false;
   loading = {
     newReleases: true,
     artists: true,
-    recommendations: true,
     categories: true,
   };
   playingAlbumId: string | null = null;
@@ -31,10 +28,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadDashboardData();
-    // Load recommendations automatically after a short delay
-    setTimeout(() => {
-      this.loadRecommendations();
-    }, 1000);
   }
 
   ngOnDestroy(): void {
@@ -47,11 +40,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadNewReleases();
     this.loadTrendingArtists();
     this.loadCategories();
-
-    // Load recommendations automatically after a short delay
-    setTimeout(() => {
-      this.loadRecommendations();
-    }, 1000);
   }
 
   private loadNewReleases(): void {
@@ -111,56 +99,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.loading.artists = false;
         },
       });
-  }
-
-  loadRecommendations(): void {
-    this.loading.recommendations = true;
-
-    // Use Spotify's recommendations API with popular genres
-    this.spotifyService
-      .getRecommendations(
-        undefined, // no seed tracks
-        undefined, // no seed artists
-        ['pop', 'rock', 'hip-hop', 'electronic'], // seed genres
-        6
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.recommendations = response.tracks || [];
-          this.loading.recommendations = false;
-          this.recommendationsLoaded = true;
-        },
-        error: (err) => {
-          console.error('Error loading recommendations', err);
-          // Fallback to search if recommendations fail
-          this.loadRecommendationsFallback();
-        },
-      });
-  }
-
-  private loadRecommendationsFallback(): void {
-    // Fallback to search-based recommendations
-    this.spotifyService
-      .search({ query: 'trending', type: 'track', limit: 6 })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.recommendations = response.tracks?.items || [];
-          this.loading.recommendations = false;
-          this.recommendationsLoaded = true;
-        },
-        error: (err) => {
-          console.error('Error loading recommendations fallback', err);
-          this.recommendations = [];
-          this.loading.recommendations = false;
-          this.recommendationsLoaded = true;
-        },
-      });
-  }
-
-  refreshRecommendations(): void {
-    this.loadRecommendations();
   }
 
   private loadCategories(): void {
@@ -259,13 +197,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Navigate to search with categories
     this.router.navigate(['/search'], {
       queryParams: { q: 'music genres', type: 'playlist' },
-    });
-  }
-
-  viewAllRecommendations(): void {
-    // Navigate to search with trending tracks
-    this.router.navigate(['/search'], {
-      queryParams: { q: 'trending music', type: 'track' },
     });
   }
 

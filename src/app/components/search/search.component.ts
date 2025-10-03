@@ -136,7 +136,9 @@ export class SearchComponent implements OnInit, OnDestroy {
       this.tracks = response.tracks?.items || [];
       this.artists = response.artists?.items || [];
       this.albums = response.albums?.items || [];
-      this.playlists = response.playlists?.items || [];
+      this.playlists = this.filterValidPlaylists(
+        response.playlists?.items || []
+      );
 
       // Set total results from API
       this.totalResults =
@@ -156,7 +158,9 @@ export class SearchComponent implements OnInit, OnDestroy {
       const newTracks = response.tracks?.items || [];
       const newArtists = response.artists?.items || [];
       const newAlbums = response.albums?.items || [];
-      const newPlaylists = response.playlists?.items || [];
+      const newPlaylists = this.filterValidPlaylists(
+        response.playlists?.items || []
+      );
 
       this.tracks = [...this.tracks, ...newTracks];
       this.artists = [...this.artists, ...newArtists];
@@ -212,6 +216,21 @@ export class SearchComponent implements OnInit, OnDestroy {
     return position > height - threshold;
   }
 
+  private filterValidPlaylists(playlists: any[]): any[] {
+    return playlists.filter((playlist) => {
+      // Filter out playlists with null/undefined names or invalid data
+      return (
+        playlist &&
+        playlist.name &&
+        playlist.name.trim() !== '' &&
+        playlist.name !== 'null' &&
+        playlist.owner &&
+        playlist.owner.display_name &&
+        playlist.owner.display_name !== 'null'
+      );
+    });
+  }
+
   playTrack(track: Track): void {
     this.spotifyService.playTrack(track);
   }
@@ -223,9 +242,18 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0
-      ? images[0].url
-      : 'assets/placeholder-album.png';
+    if (images && images.length > 0 && images[0] && images[0].url) {
+      return images[0].url;
+    }
+    return 'assets/placeholder-album.png';
+  }
+
+  getPlaylistImageUrl(images: any[]): string {
+    if (images && images.length > 0 && images[0] && images[0].url) {
+      return images[0].url;
+    }
+    // Return a default playlist icon or gradient background
+    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMzMzMzMzIi8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBWMTQwSDgwVjYwWiIgZmlsbD0iIzQ0NDQ0NCIvPgo8cGF0aCBkPSJNODAgNjBIMTIwVjgwSDgwVjYwWiIgZmlsbD0iIzU1NTU1NSIvPgo8cGF0aCBkPSJNODAgODBIMTIwVjEwMEg4MFY4MFoiIGZpbGw9IiM2NjY2NjYiLz4KPHA+PC9wYXRoPgo8cGF0aCBkPSJNODAgMTAwSDEyMFYxMjBIODBWMTAwWiIgZmlsbD0iIzc3Nzc3NyIvPgo8cGF0aCBkPSJNODAgMTIwSDEyMFYxNDBIODBWMjIwWiIgZmlsbD0iIzg4ODg4OCIvPgo8L3N2Zz4K';
   }
 
   hasLoadedResults(): boolean {
