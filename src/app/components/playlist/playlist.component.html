@@ -1,0 +1,193 @@
+<div class="playlist-container">
+  <!-- Playlist Header -->
+  <div class="playlist-header" *ngIf="playlist && !loading.playlist">
+    <div class="container">
+      <div class="playlist-info">
+        <div class="playlist-image">
+          <img [src]="getImageUrl(playlist.images)" [alt]="playlist.name" />
+        </div>
+        <div class="playlist-details">
+          <h1 class="playlist-name">{{ playlist.name }}</h1>
+          <p class="playlist-description" *ngIf="playlist.description">
+            {{ playlist.description }}
+          </p>
+          <p class="playlist-owner">
+            by
+            <a [routerLink]="['/artist', playlist.owner.id]">{{
+              playlist.owner.display_name
+            }}</a>
+          </p>
+          <div class="playlist-meta">
+            <div class="meta-item">
+              <i class="fas fa-music"></i>
+              <span>{{ playlist.tracks.total }} tracks</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-eye"></i>
+              <span>{{ playlist.followers.total }} followers</span>
+            </div>
+            <div class="meta-item">
+              <i class="fas fa-calendar"></i>
+              <span>{{
+                playlist.snapshot_id ? "Updated recently" : "Unknown"
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State for Playlist Header -->
+  <div class="playlist-header loading" *ngIf="loading.playlist">
+    <div class="container">
+      <div class="playlist-info">
+        <div class="playlist-image">
+          <div class="loading-placeholder"></div>
+        </div>
+        <div class="playlist-details">
+          <div class="loading-placeholder title"></div>
+          <div class="loading-placeholder description"></div>
+          <div class="loading-placeholder owner"></div>
+          <div class="loading-placeholder meta"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Tracks Section -->
+    <section class="section" *ngIf="playlist && !loading.playlist">
+      <div class="section-header">
+        <h2 class="section-title"><i class="fas fa-list"></i> Tracks</h2>
+      </div>
+
+      <!-- Loading State for Tracks -->
+      <div class="tracks-loading" *ngIf="loading.tracks">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading tracks...</p>
+      </div>
+
+      <div class="tracks-list" *ngIf="!loading.tracks && tracks.length > 0">
+        <div
+          class="track-item"
+          *ngFor="let track of tracks; let i = index"
+          [routerLink]="['/track', track.id]"
+        >
+          <div class="track-number">{{ i + 1 }}</div>
+          <div class="track-image">
+            <img [src]="getImageUrl(playlist.images)" [alt]="playlist.name" />
+            <div
+              class="play-overlay"
+              (click)="playTrack(track); $event.stopPropagation()"
+            >
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="track-info">
+            <h5 class="track-name">
+              {{ track.name }}
+            </h5>
+            <p class="track-artist">{{ getArtistNames(track.artists) }}</p>
+          </div>
+          <div class="track-duration">
+            {{ formatDuration(track.duration_ms) }}
+          </div>
+          <div class="track-popularity">{{ track.popularity }}%</div>
+        </div>
+      </div>
+
+      <!-- No Tracks -->
+      <div class="no-tracks" *ngIf="!loading.tracks && tracks.length === 0">
+        <div class="no-tracks-content">
+          <i class="fas fa-music"></i>
+          <h3>No tracks available</h3>
+          <p>
+            This playlist doesn't have any tracks or they couldn't be loaded.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Playlist Information Section -->
+    <section class="section" *ngIf="playlist && !loading.playlist">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-info-circle"></i> Playlist Information
+        </h2>
+      </div>
+
+      <div class="playlist-details-grid">
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-music"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Playlist Name</h5>
+            <p>{{ playlist.name }}</p>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Owner</h5>
+            <p>{{ playlist.owner.display_name }}</p>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-music"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Total Tracks</h5>
+            <p>{{ playlist.tracks.total }}</p>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-eye"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Followers</h5>
+            <p>{{ playlist.followers.total }}</p>
+          </div>
+        </div>
+
+        <div class="detail-card description-card" *ngIf="playlist.description">
+          <div class="detail-icon">
+            <i class="fas fa-align-left"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Description</h5>
+            <p class="description-text">
+              {{ decodeHtmlEntities(playlist.description) }}
+            </p>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="detail-icon">
+            <i class="fas fa-link"></i>
+          </div>
+          <div class="detail-content">
+            <h5>Spotify Link</h5>
+            <a
+              [href]="playlist.external_urls?.spotify"
+              target="_blank"
+              class="spotify-link"
+            >
+              <i class="fab fa-spotify"></i> Open in Spotify
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

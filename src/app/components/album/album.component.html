@@ -91,17 +91,24 @@
       </div>
 
       <div class="tracks-list" *ngIf="!loading.tracks && tracks.length > 0">
-        <div class="track-item" *ngFor="let track of tracks; let i = index">
+        <div
+          class="track-item"
+          *ngFor="let track of tracks; let i = index"
+          [routerLink]="['/track', track.id]"
+        >
           <div class="track-number">{{ i + 1 }}</div>
           <div class="track-image">
             <img [src]="getImageUrl(album.images)" [alt]="album.name" />
-            <div class="play-overlay" (click)="playTrack(track)">
+            <div
+              class="play-overlay"
+              (click)="playTrack(track); $event.stopPropagation()"
+            >
               <i class="fas fa-play"></i>
             </div>
           </div>
           <div class="track-info">
             <h5 class="track-name">
-              <a [routerLink]="['/track', track.id]">{{ track.name }}</a>
+              {{ track.name }}
             </h5>
             <p class="track-artist">{{ getArtistNames(track.artists) }}</p>
           </div>

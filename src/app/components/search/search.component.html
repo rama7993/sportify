@@ -120,13 +120,16 @@
       <h4 class="section-title"><i class="fas fa-music"></i> Tracks</h4>
       <div class="row">
         <div class="col-lg-6 col-md-12 mb-3" *ngFor="let track of tracks">
-          <div class="track-card">
+          <div class="track-card" [routerLink]="['/track', track.id]">
             <div class="track-image">
               <img
                 [src]="getImageUrl(track.album.images)"
                 [alt]="track.album.name"
               />
-              <div class="play-overlay" (click)="playTrack(track)">
+              <div
+                class="play-overlay"
+                (click)="playTrack(track); $event.stopPropagation()"
+              >
                 <i class="fas fa-play"></i>
               </div>
             </div>
@@ -136,11 +139,18 @@
                 <a
                   [routerLink]="['/artist', artist.id]"
                   *ngFor="let artist of track.artists; let last = last"
+                  (click)="$event.stopPropagation()"
                 >
                   {{ artist.name }}<span *ngIf="!last">, </span>
                 </a>
               </p>
-              <p class="track-album">{{ track.album.name }}</p>
+              <p class="track-album">
+                <a
+                  [routerLink]="['/album', track.album.id]"
+                  (click)="$event.stopPropagation()"
+                  >{{ track.album.name }}</a
+                >
+              </p>
               <div class="track-details">
                 <span class="track-duration">{{
                   formatDuration(track.duration_ms)
@@ -149,7 +159,12 @@
                   >{{ track.popularity }}% popular</span
                 >
               </div>
-              <audio controls class="track-preview" *ngIf="track.preview_url">
+              <audio
+                controls
+                class="track-preview"
+                *ngIf="track.preview_url"
+                (click)="$event.stopPropagation()"
+              >
                 <source [src]="track.preview_url" type="audio/mpeg" />
                 Your browser does not support the audio element.
               </audio>
@@ -170,13 +185,13 @@
           class="col-lg-3 col-md-4 col-sm-6 mb-4"
           *ngFor="let artist of artists"
         >
-          <div class="artist-card">
+          <div class="artist-card" [routerLink]="['/artist', artist.id]">
             <div class="artist-image">
               <img [src]="getImageUrl(artist.images)" [alt]="artist.name" />
             </div>
             <div class="artist-info">
               <h5 class="artist-name">
-                <a [routerLink]="['/artist', artist.id]">{{ artist.name }}</a>
+                {{ artist.name }}
               </h5>
               <p class="artist-followers">
                 {{ artist.followers.total | number }} followers
@@ -198,13 +213,13 @@
           class="col-lg-3 col-md-4 col-sm-6 mb-4"
           *ngFor="let album of albums"
         >
-          <div class="album-card">
+          <div class="album-card" [routerLink]="['/album', album.id]">
             <div class="album-image">
               <img [src]="getImageUrl(album.images)" [alt]="album.name" />
             </div>
             <div class="album-info">
               <h5 class="album-name">
-                <a [routerLink]="['/album', album.id]">{{ album.name }}</a>
+                {{ album.name }}
               </h5>
               <p class="album-artist">{{ album.artists[0].name }}</p>
               <p class="album-year">{{ album.release_date | date : "yyyy" }}</p>
@@ -222,7 +237,11 @@
           class="col-lg-3 col-md-4 col-sm-6 mb-4"
           *ngFor="let playlist of playlists"
         >
-          <div class="playlist-card" *ngIf="playlist?.name">
+          <div
+            class="playlist-card"
+            *ngIf="playlist?.name"
+            [routerLink]="['/playlist', playlist.id]"
+          >
             <div class="playlist-image">
               <img
                 [src]="getPlaylistImageUrl(playlist?.images || [])"

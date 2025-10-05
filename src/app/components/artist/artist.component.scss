@@ -162,10 +162,19 @@
   border-radius: 10px;
   transition: all 0.3s ease;
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 
   &:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateX(5px);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &:focus {
+    outline: 2px solid #1db954;
+    outline-offset: 2px;
   }
 
   .track-number {
@@ -226,6 +235,15 @@
       color: rgba(255, 255, 255, 0.7);
       margin: 0;
       font-size: 0.9rem;
+
+      a {
+        color: #1db954;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 
@@ -260,11 +278,22 @@
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     background: rgba(255, 255, 255, 0.15);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &:focus {
+    outline: 2px solid #1db954;
+    outline-offset: 2px;
   }
 }
 
@@ -309,16 +338,8 @@
 .album-info {
   .album-name {
     margin-bottom: 0.5rem;
-
-    a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-
-      &:hover {
-        color: #1db954;
-      }
-    }
+    color: white;
+    font-weight: 600;
   }
 
   .album-year {
@@ -350,11 +371,22 @@
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     background: rgba(255, 255, 255, 0.15);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &:focus {
+    outline: 2px solid #1db954;
+    outline-offset: 2px;
   }
 }
 
@@ -373,16 +405,8 @@
 .artist-info {
   .artist-name {
     margin-bottom: 0.5rem;
-
-    a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-
-      &:hover {
-        color: #1db954;
-      }
-    }
+    color: white;
+    font-weight: 600;
   }
 
   .artist-followers {

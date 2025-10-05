@@ -84,20 +84,33 @@
         class="tracks-list"
         *ngIf="!loading.topTracks && topTracks.length > 0"
       >
-        <div class="track-item" *ngFor="let track of topTracks; let i = index">
+        <div
+          class="track-item"
+          *ngFor="let track of topTracks; let i = index"
+          [routerLink]="['/track', track.id]"
+        >
           <div class="track-number">{{ i + 1 }}</div>
           <div class="track-image">
             <img
               [src]="getImageUrl(track.album.images)"
               [alt]="track.album.name"
             />
-            <div class="play-overlay" (click)="playTrack(track)">
+            <div
+              class="play-overlay"
+              (click)="playTrack(track); $event.stopPropagation()"
+            >
               <i class="fas fa-play"></i>
             </div>
           </div>
           <div class="track-info">
             <h5 class="track-name">{{ track.name }}</h5>
-            <p class="track-album">{{ track.album.name }}</p>
+            <p class="track-album">
+              <a
+                [routerLink]="['/album', track.album.id]"
+                (click)="$event.stopPropagation()"
+                >{{ track.album.name }}</a
+              >
+            </p>
           </div>
           <div class="track-duration">
             {{ formatDuration(track.duration_ms) }}
@@ -122,16 +135,20 @@
       </div>
 
       <div class="albums-grid" *ngIf="!loading.albums && albums.length > 0">
-        <div class="album-card" *ngFor="let album of albums">
+        <div
+          class="album-card"
+          *ngFor="let album of albums"
+          [routerLink]="['/album', album.id]"
+        >
           <div class="album-image">
             <img [src]="getImageUrl(album.images)" [alt]="album.name" />
-            <div class="play-overlay">
+            <div class="play-overlay" (click)="$event.stopPropagation()">
               <i class="fas fa-play"></i>
             </div>
           </div>
           <div class="album-info">
             <h5 class="album-name">
-              <a [routerLink]="['/album', album.id]">{{ album.name }}</a>
+              {{ album.name }}
             </h5>
             <p class="album-year">{{ album.release_date | date : "yyyy" }}</p>
             <p class="album-type">{{ album.album_type | titlecase }}</p>
@@ -155,7 +172,11 @@
       </div>
 
       <div class="artists-grid" *ngIf="relatedArtists.length > 0">
-        <div class="artist-card" *ngFor="let relatedArtist of relatedArtists">
+        <div
+          class="artist-card"
+          *ngFor="let relatedArtist of relatedArtists"
+          [routerLink]="['/artist', relatedArtist.id]"
+        >
           <div class="artist-image">
             <img
               [src]="getImageUrl(relatedArtist.images)"
@@ -164,9 +185,7 @@
           </div>
           <div class="artist-info">
             <h5 class="artist-name">
-              <a [routerLink]="['/artist', relatedArtist.id]">{{
-                relatedArtist.name
-              }}</a>
+              {{ relatedArtist.name }}
             </h5>
             <p class="artist-followers">
               {{ formatNumber(relatedArtist.followers?.total || 0) }} followers

@@ -299,6 +299,38 @@ export class SpotifyService {
     );
   }
 
+  // Get playlist details
+  getPlaylist(playlistId: string): Observable<any> {
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/playlists/${playlistId}`, {
+          headers: this.setAuthHeader(),
+        })
+      )
+    );
+  }
+
+  // Get playlist tracks
+  getPlaylistTracks(
+    playlistId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('offset', offset.toString())
+      .set('market', 'IN');
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/playlists/${playlistId}/tracks`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
   // Get recommendations
   getRecommendations(
     seedTracks?: string[],

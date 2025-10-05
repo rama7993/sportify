@@ -178,6 +178,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return num.toString();
   }
 
+  getArtistNames(artists: any[]): string {
+    return artists.map((artist) => artist.name).join(', ');
+  }
+
   // Navigation methods
   viewAllAlbums(): void {
     // Navigate to search with album filter for new releases
@@ -212,9 +216,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   viewCategory(category: any): void {
     // Navigate to category playlists
-    this.router.navigate(['/search'], {
-      queryParams: { q: category.name, type: 'playlist' },
-    });
+    this.router.navigate(['/category', category.id]);
   }
 
   isAlbumPlaying(albumId: string): boolean {

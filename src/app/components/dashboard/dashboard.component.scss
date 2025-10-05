@@ -27,6 +27,12 @@
   font-weight: 700;
   margin-bottom: 1rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #1db954;
+    text-shadow: 2px 2px 4px rgba(29, 185, 84, 0.3);
+  }
 }
 
 .hero-subtitle {
@@ -138,8 +144,20 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #1ed760;
+    transform: translateX(5px);
+  }
+
   i {
     font-size: 1.2rem;
+    transition: all 0.3s ease;
+  }
+
+  &:hover i {
+    transform: scale(1.1);
   }
 }
 
@@ -147,9 +165,12 @@
   color: #1db954;
   text-decoration: none;
   font-weight: 500;
+  transition: all 0.3s ease;
 
   &:hover {
+    color: #1ed760;
     text-decoration: underline;
+    transform: translateX(3px);
   }
 }
 
@@ -190,7 +211,8 @@
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(29, 185, 84, 0.2);
+    border-color: rgba(29, 185, 84, 0.4);
   }
 }
 
