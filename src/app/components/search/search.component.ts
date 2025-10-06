@@ -10,7 +10,6 @@ import {
   BreadcrumbComponent,
   BreadcrumbItem,
 } from '../breadcrumb/breadcrumb.component';
-import { TestEnvComponent } from '../../test-env.component';
 
 @Component({
   selector: 'app-search',
@@ -21,7 +20,6 @@ import { TestEnvComponent } from '../../test-env.component';
     RouterLink,
     CommonModule,
     BreadcrumbComponent,
-    TestEnvComponent,
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
