@@ -69,7 +69,14 @@
 .main-content {
   margin-top: 60px;
   min-height: calc(100vh - 60px);
-  padding-bottom: 80px;
+  padding-bottom: 75px; // Space for audio player
+  // Ensure content is scrollable
+  position: relative;
+  z-index: 1;
+}
+
+.section {
+  margin-bottom: 2rem;
 }
 
 // Responsive Design

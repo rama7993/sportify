@@ -2,6 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SpotifyService, Track } from '../../../services/spotify.service';
+import { TrackPlayingService } from '../../../services/track-playing.service';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
@@ -42,6 +43,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   constructor(
     private spotifyService: SpotifyService,
+    private trackPlayingService: TrackPlayingService,
     private route: ActivatedRoute
   ) {}
 
@@ -69,19 +71,42 @@ export class SearchComponent implements OnInit, OnDestroy {
   private setupSearchDebounce(): void {
     this.searchSubject
       .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.resetSearch();
-        this.search();
+      .subscribe((query) => {
+        // Only search if query is not empty after trimming
+        if (query && query.trim()) {
+          this.resetSearch();
+          this.search();
+        }
       });
   }
 
   onSearchInput(): void {
+    // Clear results if query is empty
+    if (!this.query || !this.query.trim()) {
+      this.resetSearch();
+      this.loading = false;
+      this.loadingState = 'idle';
+      return;
+    }
+
     this.searchSubject.next(this.query);
   }
 
   onSearchTypeChange(): void {
     this.resetSearch();
     this.search();
+  }
+
+  onSearchButtonClick(): void {
+    // Only search if query is not empty
+    if (this.query && this.query.trim()) {
+      this.search();
+    }
+  }
+
+  setSearchQuery(query: string): void {
+    this.query = query;
+    this.onSearchInput();
   }
 
   resetSearch(): void {
@@ -165,6 +190,8 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.artists.length +
         this.albums.length +
         this.playlists.length;
+
+      // Note: Preview URLs will be fetched on-demand when tracks are clicked
     } else {
       // Load more - append data
       const newTracks = response.tracks?.items || [];
@@ -185,6 +212,8 @@ export class SearchComponent implements OnInit, OnDestroy {
         newAlbums.length +
         newPlaylists.length;
       this.loadedResults += newItemsCount;
+
+      // Note: Preview URLs will be fetched on-demand when tracks are clicked
     }
 
     // Check if there are more results available AND we actually got new items AND we haven't loaded everything
@@ -243,21 +272,32 @@ export class SearchComponent implements OnInit, OnDestroy {
     });
   }
 
-  playTrack(track: Track): void {
-    this.spotifyService.playTrack(track);
+  async playTrack(track: Track): Promise<void> {
+    await this.trackPlayingService.playTrack(track);
+  }
+
+  openInSpotify(track: Track): void {
+    this.trackPlayingService.openInSpotify(track);
   }
 
   formatDuration(ms: number): string {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return this.trackPlayingService.formatDuration(ms);
   }
 
   getImageUrl(images: any[]): string {
-    if (images && images.length > 0 && images[0] && images[0].url) {
-      return images[0].url;
-    }
-    return 'assets/placeholder-album.png';
+    return this.trackPlayingService.getImageUrl(images);
+  }
+
+  isTrackPlaying(trackId: string): boolean {
+    return this.trackPlayingService.isTrackPlaying(trackId);
+  }
+
+  isTrackSearchingPreview(trackId: string): boolean {
+    return this.trackPlayingService.isTrackSearchingPreview(trackId);
+  }
+
+  hasPreviewUrl(track: Track): boolean {
+    return this.trackPlayingService.hasPreviewUrl(track);
   }
 
   getPlaylistImageUrl(images: any[]): string {

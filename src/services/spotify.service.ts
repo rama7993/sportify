@@ -68,6 +68,7 @@ export class SpotifyService {
   private clientId = environment.spotify.clientId;
   private clientSecret = environment.spotify.clientSecret;
   private accessToken!: string;
+  private previewCache = new Map<string, string | null>();
 
   // Audio player state
   private currentTrackSubject = new BehaviorSubject<Track | null>(null);
@@ -362,19 +363,6 @@ export class SpotifyService {
     );
   }
 
-  getRelatedArtists(artistId: string): Observable<any> {
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(
-          `${this.apiUrl}/artists/${artistId}/related-artists`,
-          {
-            headers: this.setAuthHeader(),
-          }
-        )
-      )
-    );
-  }
-
   // ========================================
   // ALBUMS API
   // ========================================
@@ -469,6 +457,12 @@ export class SpotifyService {
     this.isPlayingSubject.next(true);
   }
 
+  playTrackDirectly(track: Track): void {
+    // Play track directly without any preview fetching logic
+    this.currentTrackSubject.next(track);
+    this.isPlayingSubject.next(true);
+  }
+
   pauseTrack(): void {
     this.isPlayingSubject.next(false);
   }
@@ -504,7 +498,7 @@ export class SpotifyService {
     if (this.hasPreviewUrl(track)) {
       return 'Preview available';
     }
-    return 'Preview not available - Backend API integration needed';
+    return 'No preview available';
   }
 
   // Method to get Spotify URL for a track
@@ -529,25 +523,41 @@ export class SpotifyService {
   /**
    * Find preview URL using backend API
    */
-  async findPreviewWithBackend(
+  private async findPreviewWithBackend(
     trackName: string,
     artistName?: string
   ): Promise<string | null> {
+    // Create cache key
+    const cacheKey = `${trackName}|${artistName || 'unknown'}`;
+
+    // Check cache first
+    if (this.previewCache.has(cacheKey)) {
+      // console.log('🎵 Using cached preview URL for:', trackName);
+      return this.previewCache.get(cacheKey) || null;
+    }
+
     try {
+      //console.log('🔍 Fetching preview URL for:', trackName);
       const request: PreviewRequest = { trackName, artistName };
       const response = await this.backendService
         .getPreviewUrl(request)
         .toPromise();
 
+      let previewUrl: string | null = null;
       if (response?.success && response.previewUrl) {
-        console.log('✅ Preview found via backend:', response.previewUrl);
-        return response.previewUrl;
+        previewUrl = response.previewUrl;
+        //console.log('✅ Found preview URL for:', trackName);
+      } else {
+        //console.log('❌ No preview URL found for:', trackName);
       }
 
-      console.log('❌ No preview found via backend');
-      return null;
+      // Cache the result (even if null)
+      this.previewCache.set(cacheKey, previewUrl);
+      return previewUrl;
     } catch (error) {
-      console.error('❌ Backend preview search failed:', error);
+      console.warn('Backend preview search failed:', error);
+      // Cache the failure
+      this.previewCache.set(cacheKey, null);
       return null;
     }
   }
@@ -556,66 +566,38 @@ export class SpotifyService {
    * Enhanced track object with preview URL using backend
    */
   async enhanceTrackWithPreview(track: any): Promise<any> {
-    // If track already has a preview URL, return as is
     if (track.preview_url) {
       return track;
     }
 
-    try {
-      let previewUrl = null;
+    const artistName = track.artists?.[0]?.name;
+    const previewUrl = await this.findPreviewWithBackend(
+      track.name,
+      artistName
+    );
 
-      if (track.name && track.artists && track.artists.length > 0) {
-        previewUrl = await this.findPreviewWithBackend(
-          track.name,
-          track.artists[0].name
-        );
-      } else if (track.name) {
-        previewUrl = await this.findPreviewWithBackend(track.name);
-      }
-
-      return {
-        ...track,
-        preview_url: previewUrl,
-      };
-    } catch (error) {
-      console.warn(`Failed to enhance track ${track.id} with preview:`, error);
-      return track;
-    }
+    return {
+      ...track,
+      preview_url: previewUrl,
+    };
   }
 
   /**
-   * Get enhanced tracks with working preview URLs using backend
+   * Clear preview cache (useful for testing or memory management)
    */
-  async getEnhancedTracks(tracks: any[]): Promise<any[]> {
-    if (!tracks || tracks.length === 0) {
-      return tracks;
-    }
-
-    try {
-      const enhancedTracks = await Promise.all(
-        tracks.map((track) => this.enhanceTrackWithPreview(track))
-      );
-      return enhancedTracks;
-    } catch (error) {
-      console.warn('Failed to enhance tracks with preview URLs:', error);
-      return tracks; // Return original tracks if enhancement fails
-    }
+  clearPreviewCache(): void {
+    this.previewCache.clear();
+    // console.log('🧹 Preview cache cleared');
   }
 
   /**
-   * Test backend connectivity
+   * Get cache statistics
    */
-  async testBackend(): Promise<void> {
-    try {
-      const response = await this.backendService.testBackend().toPromise();
-      if (response?.success) {
-        console.log('✅ Backend test successful:', response.message);
-      } else {
-        console.error('❌ Backend test failed:', response?.error);
-      }
-    } catch (error) {
-      console.error('❌ Backend test error:', error);
-    }
+  getCacheStats(): { size: number; keys: string[] } {
+    return {
+      size: this.previewCache.size,
+      keys: Array.from(this.previewCache.keys()),
+    };
   }
 
   /**

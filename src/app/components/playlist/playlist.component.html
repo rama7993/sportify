@@ -11,9 +11,22 @@
         </div>
         <div class="playlist-details">
           <h1 class="playlist-name">{{ playlist.name }}</h1>
-          <p class="playlist-description" *ngIf="playlist.description">
-            {{ playlist.description }}
-          </p>
+          <div class="playlist-description" *ngIf="playlist.description">
+            <p class="description-text">
+              {{
+                showFullDescription
+                  ? playlist.description
+                  : getTruncatedDescription(playlist.description)
+              }}
+            </p>
+            <button
+              class="read-more-btn"
+              *ngIf="shouldShowReadMore(playlist.description)"
+              (click)="toggleDescription()"
+            >
+              {{ showFullDescription ? "Show less" : "Read more" }}
+            </button>
+          </div>
           <p class="playlist-owner">
             by
             <a [routerLink]="['/artist', playlist.owner.id]">{{
@@ -85,8 +98,19 @@
             <div
               class="play-overlay"
               (click)="playTrack(track); $event.stopPropagation()"
+              [class.playing]="isTrackPlaying(track.id)"
+              [class.searching]="isTrackSearchingPreview(track.id)"
             >
-              <i class="fas fa-play"></i>
+              <i
+                class="fas"
+                [class.fa-play]="
+                  !isTrackPlaying(track.id) &&
+                  !isTrackSearchingPreview(track.id)
+                "
+                [class.fa-pause]="isTrackPlaying(track.id)"
+                [class.fa-spinner]="isTrackSearchingPreview(track.id)"
+                [class.fa-spin]="isTrackSearchingPreview(track.id)"
+              ></i>
             </div>
           </div>
           <div class="track-info">
@@ -99,6 +123,39 @@
             {{ formatDuration(track.duration_ms) }}
           </div>
           <div class="track-popularity">{{ track.popularity }}%</div>
+
+          <!-- Action Buttons -->
+          <div class="track-actions">
+            <button
+              class="action-btn play-btn"
+              (click)="playTrack(track); $event.stopPropagation()"
+              title="Play Preview"
+            >
+              <i
+                class="fas"
+                [class.fa-play]="
+                  !isTrackPlaying(track.id) &&
+                  !isTrackSearchingPreview(track.id)
+                "
+                [class.fa-pause]="isTrackPlaying(track.id)"
+                [class.fa-spinner]="isTrackSearchingPreview(track.id)"
+                [class.fa-spin]="isTrackSearchingPreview(track.id)"
+              ></i>
+              <span>{{
+                isTrackSearchingPreview(track.id) ? "Searching..." : "Play"
+              }}</span>
+            </button>
+
+            <button
+              class="action-btn spotify-btn"
+              (click)="openInSpotify(track); $event.stopPropagation()"
+              *ngIf="track.external_urls?.spotify"
+              title="Open in Spotify"
+            >
+              <i class="fab fa-spotify"></i>
+              <span>Spotify</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -169,9 +226,26 @@
           </div>
           <div class="detail-content">
             <h5>Description</h5>
-            <p class="description-text">
-              {{ decodeHtmlEntities(playlist.description) }}
-            </p>
+            <div class="description-text">
+              <p>
+                {{
+                  showFullDescription
+                    ? decodeHtmlEntities(playlist.description)
+                    : getTruncatedDescription(
+                        decodeHtmlEntities(playlist.description)
+                      )
+                }}
+              </p>
+              <button
+                class="read-more-btn"
+                *ngIf="
+                  shouldShowReadMore(decodeHtmlEntities(playlist.description))
+                "
+                (click)="toggleDescription()"
+              >
+                {{ showFullDescription ? "Show less" : "Read more" }}
+              </button>
+            </div>
           </div>
         </div>
 

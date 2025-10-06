@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
+import { TrackPlayingService } from '../../../services/track-playing.service';
 import { Subject, takeUntil } from 'rxjs';
 import {
   BreadcrumbComponent,
@@ -30,7 +31,8 @@ export class AlbumComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private trackPlayingService: TrackPlayingService
   ) {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
@@ -87,33 +89,40 @@ export class AlbumComponent implements OnInit, OnDestroy {
       });
   }
 
-  playTrack(track: Track): void {
-    this.spotifyService.playTrack(track);
+  async playTrack(track: Track): Promise<void> {
+    await this.trackPlayingService.playTrack(track, { album: this.album });
   }
 
   formatDuration(ms: number): string {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return this.trackPlayingService.formatDuration(ms);
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0
-      ? images[0].url
-      : 'assets/placeholder-album.png';
+    return this.trackPlayingService.getImageUrl(images);
   }
 
   getArtistNames(artists: any[]): string {
-    return artists.map((artist) => artist.name).join(', ');
+    return this.trackPlayingService.getArtistNames(artists);
+  }
+
+  openInSpotify(track: Track): void {
+    this.trackPlayingService.openInSpotify(track);
   }
 
   formatNumber(num: number): string {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toString();
+    return this.trackPlayingService.formatNumber(num);
+  }
+
+  isTrackPlaying(trackId: string): boolean {
+    return this.trackPlayingService.isTrackPlaying(trackId);
+  }
+
+  isTrackSearchingPreview(trackId: string): boolean {
+    return this.trackPlayingService.isTrackSearchingPreview(trackId);
+  }
+
+  hasPreviewUrl(track: Track): boolean {
+    return this.trackPlayingService.hasPreviewUrl(track);
   }
 
   private setBreadcrumbs(): void {

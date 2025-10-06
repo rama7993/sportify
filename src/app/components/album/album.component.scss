@@ -234,17 +234,43 @@
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: all 0.3s ease;
       cursor: pointer;
 
       i {
         color: white;
         font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      &.playing {
+        opacity: 1;
+        background: rgba(29, 185, 84, 0.8);
+
+        i {
+          color: white;
+          font-size: 1.4rem;
+        }
+      }
+
+      &.searching {
+        opacity: 1;
+        background: rgba(255, 193, 7, 0.8);
+
+        i {
+          color: white;
+          font-size: 1.4rem;
+        }
       }
     }
 
     &:hover .play-overlay {
       opacity: 1;
+      background: rgba(29, 185, 84, 0.8);
+
+      i {
+        transform: scale(1.1);
+      }
     }
   }
 
@@ -278,6 +304,72 @@
     font-weight: 600;
     min-width: 50px;
     text-align: right;
+  }
+
+  .track-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    min-width: 120px;
+    justify-content: flex-end;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      min-width: fit-content;
+      justify-content: center;
+
+      &.play-btn {
+        background: transparent;
+        border: 1px solid #1db954;
+        color: #1db954;
+        box-shadow: none;
+
+        &:hover {
+          background: #1db954;
+          color: white;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+
+      &.spotify-btn {
+        background: #1db954;
+        color: white;
+        border: none;
+
+        &:hover {
+          background: #1ed760;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+        }
+      }
+
+      i {
+        font-size: 0.9rem;
+      }
+
+      span {
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+    }
   }
 }
 

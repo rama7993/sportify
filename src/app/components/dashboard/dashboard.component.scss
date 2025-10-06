@@ -28,11 +28,6 @@
   margin-bottom: 1rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
-
-  &:hover {
-    color: #1db954;
-    text-shadow: 2px 2px 4px rgba(29, 185, 84, 0.3);
-  }
 }
 
 .hero-subtitle {
@@ -220,6 +215,7 @@
 .category-card,
 .artist-card {
   text-align: center;
+  position: relative;
 
   .album-image,
   .category-image,
@@ -251,17 +247,33 @@
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: all 0.3s ease;
       cursor: pointer;
 
       i {
-        font-size: 2rem;
         color: white;
+        font-size: 2rem;
+        transition: all 0.3s ease;
+      }
+
+      &.playing {
+        opacity: 1;
+        background: rgba(29, 185, 84, 0.8);
+
+        i {
+          color: white;
+          font-size: 2.2rem;
+        }
       }
     }
 
     &:hover .play-overlay {
       opacity: 1;
+      background: rgba(29, 185, 84, 0.8);
+
+      i {
+        transform: scale(1.1);
+      }
     }
   }
 

@@ -1,6 +1,6 @@
 # 🎵 Sportify - Spotify Clone
 
-A modern, responsive music discovery platform built with Angular 17, featuring real-time Spotify API integration, advanced search capabilities, and a beautiful UI with comprehensive music browsing experience.
+A modern, responsive music discovery platform built with Angular 17, featuring real-time Spotify API integration, advanced search capabilities, and a beautiful UI with comprehensive music browsing experience. This project showcases professional Angular development skills with a complete music streaming application that mimics Spotify's core functionality.
 
 ## ✨ Features
 
@@ -12,6 +12,14 @@ A modern, responsive music discovery platform built with Angular 17, featuring r
 - **📂 Music Categories**: Browse music by categories for better discovery
 - **🎯 Optimized Loading**: Consolidated loading states with proper error handling
 - **✨ Green Hover Effects**: Consistent Spotify-themed interactions
+
+### 🎧 Backend Integration
+
+- **🔗 Backend API Integration**: Clean integration with custom backend service
+- **🎵 Preview URL Enhancement**: Find preview URLs for tracks using backend API
+- **⚡ Manual Preview Search**: "Find Preview" buttons for on-demand preview discovery
+- **🛡️ Error Handling**: Graceful fallbacks when backend is unavailable
+- **🌐 Environment Configuration**: Flexible backend URL configuration for different environments
 
 ### 🔍 Advanced Search
 
@@ -73,12 +81,15 @@ This project demonstrates advanced Angular development skills and is perfect for
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Angular 17 (Standalone Components)
-- **Styling**: SCSS with Bootstrap 5
+- **Frontend**: Angular 17.3.0 (Standalone Components)
+- **Styling**: SCSS with Bootstrap 5.3.3
 - **Icons**: Font Awesome 6
 - **API**: Spotify Web API
-- **SSR**: Angular Universal
-- **Deployment**: Vercel
+- **SSR**: Angular Universal 17.3.7
+- **Deployment**: Vercel (Frontend)
+- **TypeScript**: 5.4.2
+- **RxJS**: 7.8.0
+- **Build Tool**: Angular CLI 17.3.7
 
 ## 📦 Installation
 
@@ -109,14 +120,19 @@ This project demonstrates advanced Angular development skills and is perfect for
        clientId: "your-client-id",
        clientSecret: "your-client-secret",
      },
+     backendApiUrl: "http://localhost:3000/api/spotify",
    };
    ```
+
+   **Note**: The current environment file contains placeholder credentials. Replace them with your actual Spotify API credentials for full functionality.
 
 4. **Run the development server**
 
    ```bash
    ng serve
    ```
+
+   The application will be available at `http://localhost:4200`
 
 5. **Run with SSR (Server-Side Rendering)**
    ```bash
@@ -134,24 +150,27 @@ This project demonstrates advanced Angular development skills and is perfect for
    npm i -g vercel
    ```
 
-2. **Deploy**
+2. **Deploy Frontend**
 
    ```bash
    vercel
    ```
 
 3. **Set environment variables in Vercel dashboard**
+
    - `SPOTIFY_CLIENT_ID`: Your Spotify Client ID
    - `SPOTIFY_CLIENT_SECRET`: Your Spotify Client Secret
+   - `BACKEND_API_URL`: Your backend API URL (if using external backend)
 
 ### Other Platforms
 
-The app can be deployed to any platform that supports Node.js:
+The app can be deployed to any platform that supports Node.js and Angular:
 
-- Netlify
-- Heroku
-- AWS
-- Google Cloud Platform
+- **Netlify**: Use `ng build` and deploy the `dist/sportify/browser` folder
+- **Heroku**: Add a `package.json` with start script and deploy
+- **AWS S3 + CloudFront**: Static hosting with CDN
+- **Google Cloud Platform**: App Engine or Cloud Run
+- **Firebase Hosting**: `firebase deploy` after `ng build`
 
 ## 🎯 Key Components
 

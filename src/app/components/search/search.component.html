@@ -25,12 +25,13 @@
                 placeholder="Search for songs, artists, albums, playlists..."
                 [(ngModel)]="query"
                 (input)="onSearchInput()"
-                (keyup.enter)="search()"
+                (keyup.enter)="onSearchButtonClick()"
               />
               <button
                 class="btn btn-primary search-btn"
                 type="button"
-                (click)="search()"
+                (click)="onSearchButtonClick()"
+                [disabled]="!query || !query.trim()"
               >
                 <i class="fas fa-search"></i>
               </button>
@@ -108,6 +109,45 @@
       </div>
     </div>
 
+    <!-- Default Content -->
+    <div
+      class="default-content"
+      *ngIf="!loading && !hasLoadedResults() && !query.trim()"
+    >
+      <div class="default-content-card">
+        <div class="default-icon">
+          <i class="fas fa-music"></i>
+        </div>
+        <h2>Discover Your Next Favorite Song</h2>
+        <p>
+          Search for songs, artists, albums, and playlists to find amazing music
+        </p>
+        <div class="search-suggestions">
+          <h4>Try searching for:</h4>
+          <div class="suggestion-tags">
+            <span class="suggestion-tag" (click)="setSearchQuery('pop')"
+              >Pop</span
+            >
+            <span class="suggestion-tag" (click)="setSearchQuery('rock')"
+              >Rock</span
+            >
+            <span class="suggestion-tag" (click)="setSearchQuery('jazz')"
+              >Jazz</span
+            >
+            <span class="suggestion-tag" (click)="setSearchQuery('classical')"
+              >Classical</span
+            >
+            <span class="suggestion-tag" (click)="setSearchQuery('electronic')"
+              >Electronic</span
+            >
+            <span class="suggestion-tag" (click)="setSearchQuery('hip hop')"
+              >Hip Hop</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Results Summary -->
     <div class="results-summary" *ngIf="hasLoadedResults()">
       <h3>
@@ -132,8 +172,19 @@
               <div
                 class="play-overlay"
                 (click)="playTrack(track); $event.stopPropagation()"
+                [class.playing]="isTrackPlaying(track.id)"
+                [class.searching]="isTrackSearchingPreview(track.id)"
               >
-                <i class="fas fa-play"></i>
+                <i
+                  class="fas"
+                  [class.fa-play]="
+                    !isTrackPlaying(track.id) &&
+                    !isTrackSearchingPreview(track.id)
+                  "
+                  [class.fa-pause]="isTrackPlaying(track.id)"
+                  [class.fa-spinner]="isTrackSearchingPreview(track.id)"
+                  [class.fa-spin]="isTrackSearchingPreview(track.id)"
+                ></i>
               </div>
             </div>
             <div class="track-info">
@@ -162,18 +213,39 @@
                   >{{ track.popularity }}% popular</span
                 >
               </div>
-              <audio
-                controls
-                class="track-preview"
-                *ngIf="track.preview_url"
-                (click)="$event.stopPropagation()"
-              >
-                <source [src]="track.preview_url" type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-              <p class="no-preview" *ngIf="!track.preview_url">
-                No preview available
-              </p>
+              <div class="track-actions">
+                <button
+                  class="action-btn play-btn"
+                  (click)="playTrack(track); $event.stopPropagation()"
+                  title="Play Preview"
+                >
+                  <i
+                    class="fas"
+                    [class.fa-play]="
+                      !isTrackPlaying(track.id) &&
+                      !isTrackSearchingPreview(track.id)
+                    "
+                    [class.fa-pause]="isTrackPlaying(track.id)"
+                    [class.fa-spinner]="isTrackSearchingPreview(track.id)"
+                    [class.fa-spin]="isTrackSearchingPreview(track.id)"
+                  ></i>
+                  <span>{{
+                    isTrackSearchingPreview(track.id)
+                      ? "Searching..."
+                      : "Play Preview"
+                  }}</span>
+                </button>
+
+                <button
+                  class="action-btn spotify-btn"
+                  (click)="openInSpotify(track); $event.stopPropagation()"
+                  *ngIf="track.external_urls?.spotify"
+                  title="Open in Spotify"
+                >
+                  <i class="fab fa-spotify"></i>
+                  <span>Spotify</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -270,7 +342,7 @@
     <!-- Load More Button -->
     <div
       class="load-more-container"
-      *ngIf="hasMore && loadingState !== 'searching'"
+      *ngIf="hasMore && loadingState !== 'searching' && hasLoadedResults()"
     >
       <button
         class="btn btn-outline-primary load-more-btn"

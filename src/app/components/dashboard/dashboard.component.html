@@ -71,13 +71,14 @@
             <img [src]="getImageUrl(album.images)" [alt]="album.name" />
             <div
               class="play-overlay"
-              (click)="playAlbumPreview(album); $event.stopPropagation()"
+              (click)="playAlbumPreview(album, $event)"
+              [class.playing]="isAlbumPlaying(album.id)"
             >
               <i
                 class="fas"
-                [class.fa-play]="playingAlbumId !== album.id"
-                [class.fa-spinner]="playingAlbumId === album.id"
-                [class.fa-spin]="playingAlbumId === album.id"
+                [class.fa-play]="!isAlbumPlaying(album.id)"
+                [class.fa-spinner]="isAlbumPlaying(album.id)"
+                [class.fa-spin]="isAlbumPlaying(album.id)"
               ></i>
             </div>
           </div>

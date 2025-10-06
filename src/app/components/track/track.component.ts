@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
+import { TrackPlayingService } from '../../../services/track-playing.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import {
@@ -20,13 +21,12 @@ export class TrackComponent implements OnInit, OnDestroy {
   track: Track | null = null;
   loading: boolean = true;
   breadcrumbs: BreadcrumbItem[] = [];
-  isPlaying: boolean = false;
-  isSearchingPreview: boolean = false;
 
   private destroy$ = new Subject<void>();
 
   constructor(
     private spotifyService: SpotifyService,
+    private trackPlayingService: TrackPlayingService,
     private route: ActivatedRoute
   ) {
     this.route.params.subscribe((params) => {
@@ -63,88 +63,53 @@ export class TrackComponent implements OnInit, OnDestroy {
       });
   }
 
-  playTrack(): void {
+  async playTrack(): Promise<void> {
     if (this.track) {
-      this.spotifyService.playTrack(this.track);
+      await this.trackPlayingService.playTrack(this.track);
     }
   }
 
   formatDuration(ms: number): string {
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return this.trackPlayingService.formatDuration(ms);
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0
-      ? images[0].url
-      : 'assets/placeholder-album.png';
+    return this.trackPlayingService.getImageUrl(images);
   }
 
   getArtistNames(artists: any[]): string {
-    return artists.map((artist) => artist.name).join(', ');
+    return this.trackPlayingService.getArtistNames(artists);
   }
 
   formatNumber(num: number): string {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toString();
+    return this.trackPlayingService.formatNumber(num);
   }
 
   hasPreviewUrl(): boolean {
-    return this.spotifyService.hasPreviewUrl(this.track);
+    return this.track
+      ? this.trackPlayingService.hasPreviewUrl(this.track)
+      : false;
   }
 
   openInSpotify(): void {
-    this.spotifyService.openInSpotify(this.track);
-  }
-
-  async tryFindPreview(): Promise<void> {
-    if (!this.track) return;
-
-    this.isSearchingPreview = true;
-    try {
-      console.log(
-        `🔍 Searching for preview: "${this.track.name}" by "${
-          this.track.artists?.[0]?.name || 'Unknown Artist'
-        }"`
-      );
-
-      // Use backend service to find preview
-      const enhancedTrack = await this.spotifyService.enhanceTrackWithPreview(
-        this.track
-      );
-      if (enhancedTrack.preview_url) {
-        this.track = enhancedTrack;
-        console.log('✅ Preview found and loaded!', enhancedTrack.preview_url);
-      } else {
-        console.log('❌ No preview found for this track');
-      }
-    } catch (error) {
-      console.error('❌ Error searching for preview:', error);
-    } finally {
-      this.isSearchingPreview = false;
+    if (this.track) {
+      this.trackPlayingService.openInSpotify(this.track);
     }
   }
 
-  onAudioLoaded(): void {
-    console.log('Audio loaded successfully');
+  isTrackPlaying(): boolean {
+    return this.track
+      ? this.trackPlayingService.isTrackPlaying(this.track.id)
+      : false;
   }
 
-  onTimeUpdate(): void {
-    // Handle time update if needed
+  isTrackSearchingPreview(): boolean {
+    return this.track
+      ? this.trackPlayingService.isTrackSearchingPreview(this.track.id)
+      : false;
   }
 
-  onAudioEnded(): void {
-    this.isPlaying = false;
-  }
-
-  async testBackend(): Promise<void> {
-    await this.spotifyService.testBackend();
-  }
+  // Audio event handlers removed - now handled by TrackPlayingService
 
   private setBreadcrumbs(): void {
     this.breadcrumbs = [

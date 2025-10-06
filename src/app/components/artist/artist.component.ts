@@ -20,14 +20,12 @@ export class ArtistComponent implements OnInit, OnDestroy {
   artist: any = null;
   topTracks: Track[] = [];
   albums: any[] = [];
-  relatedArtists: any[] = [];
   breadcrumbs: BreadcrumbItem[] = [];
 
   loading = {
     artist: true,
     topTracks: true,
     albums: true,
-    relatedArtists: true,
   };
 
   private destroy$ = new Subject<void>();
@@ -57,7 +55,6 @@ export class ArtistComponent implements OnInit, OnDestroy {
     this.loadArtist();
     this.loadTopTracks();
     this.loadAlbums();
-    this.loadRelatedArtists();
   }
 
   private loadArtist(): void {
@@ -105,24 +102,6 @@ export class ArtistComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Error loading albums', err);
           this.loading.albums = false;
-        },
-      });
-  }
-
-  private loadRelatedArtists(): void {
-    this.spotifyService
-      .getRelatedArtists(this.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.relatedArtists = Array.isArray(response)
-            ? response
-            : response.artists || [];
-          this.loading.relatedArtists = false;
-        },
-        error: (err) => {
-          console.error('Error loading related artists', err);
-          this.loading.relatedArtists = false;
         },
       });
   }

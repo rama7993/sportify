@@ -159,52 +159,5 @@
         </div>
       </div>
     </section>
-
-    <!-- Related Artists Section -->
-    <section class="section" *ngIf="!loading.relatedArtists">
-      <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-users"></i> Fans Also Like
-        </h2>
-      </div>
-
-      <div class="loading-container" *ngIf="loading.relatedArtists">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-
-      <div class="artists-grid" *ngIf="relatedArtists.length > 0">
-        <div
-          class="artist-card"
-          *ngFor="let relatedArtist of relatedArtists"
-          [routerLink]="['/artist', relatedArtist.id]"
-        >
-          <div class="artist-image">
-            <img
-              [src]="getImageUrl(relatedArtist.images)"
-              [alt]="relatedArtist.name"
-            />
-          </div>
-          <div class="artist-info">
-            <h5 class="artist-name">
-              {{ relatedArtist.name }}
-            </h5>
-            <p class="artist-followers">
-              {{ formatNumber(relatedArtist.followers?.total || 0) }} followers
-            </p>
-            <p class="artist-genres">
-              {{
-                relatedArtist.genres?.slice(0, 2).join(", ") || "Various genres"
-              }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="no-content" *ngIf="relatedArtists.length === 0">
-        <p>No related artists found.</p>
-      </div>
-    </section>
   </div>
 </div>

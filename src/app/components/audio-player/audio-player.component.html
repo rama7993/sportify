@@ -1,17 +1,27 @@
-<div class="audio-player" *ngIf="currentTrack">
+<div class="audio-player">
   <div class="player-container">
     <!-- Track Info -->
     <div class="track-info">
       <div class="track-image">
         <img
-          [src]="getImageUrl(currentTrack.album?.images)"
-          [alt]="currentTrack.album?.name || 'Track'"
+          [src]="
+            currentTrack
+              ? getImageUrl(currentTrack.album?.images)
+              : getPlaceholderImage()
+          "
+          [alt]="currentTrack?.album?.name || 'No Track'"
         />
       </div>
       <div class="track-details">
-        <h5 class="track-name">{{ currentTrack.name || "Unknown Track" }}</h5>
+        <h5 class="track-name">
+          {{ currentTrack?.name || "No track selected" }}
+        </h5>
         <p class="track-artist">
-          {{ getArtistNames(currentTrack.artists || []) }}
+          {{
+            currentTrack
+              ? getArtistNames(currentTrack.artists || [])
+              : "Select a track to play"
+          }}
         </p>
       </div>
     </div>
@@ -58,7 +68,9 @@
 
       <!-- Progress Bar -->
       <div class="progress-container">
-        <span class="time current-time">{{ formatTime(currentTime) }}</span>
+        <span class="time current-time">{{
+          currentTrack ? formatTime(currentTime) : "0:00"
+        }}</span>
         <div class="progress-bar-container">
           <input
             type="range"
@@ -67,34 +79,13 @@
             [max]="duration || 0"
             [value]="currentTime"
             (input)="seekTo($event)"
+            [disabled]="!currentTrack"
             #progressBar
-            [disabled]="!hasPreviewUrl()"
           />
         </div>
-        <span class="time total-time">{{ formatTime(duration) }}</span>
-      </div>
-
-      <!-- Preview Status Message -->
-      <div class="preview-status" *ngIf="!hasPreviewUrl()">
-        <i class="fas fa-info-circle"></i>
-        <span>{{ getPreviewStatusMessage() }}</span>
-        <button
-          class="spotify-link-btn"
-          (click)="openInSpotify()"
-          *ngIf="currentTrack?.external_urls?.spotify"
-          title="Open in Spotify"
-        >
-          <i class="fab fa-spotify"></i>
-          Open in Spotify
-        </button>
-        <span
-          class="no-spotify-url"
-          *ngIf="!currentTrack?.external_urls?.spotify"
-          title="No Spotify URL available"
-        >
-          <i class="fas fa-exclamation-triangle"></i>
-          No Spotify link available
-        </span>
+        <span class="time total-time">{{
+          currentTrack ? formatTime(duration) : "0:00"
+        }}</span>
       </div>
     </div>
 

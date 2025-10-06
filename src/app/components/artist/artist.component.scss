@@ -356,72 +356,6 @@
   }
 }
 
-// Artists Grid
-.artists-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-}
-
-.artist-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
-  padding: 1.5rem;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    background: rgba(255, 255, 255, 0.15);
-    text-decoration: none;
-    color: inherit;
-  }
-
-  &:focus {
-    outline: 2px solid #1db954;
-    outline-offset: 2px;
-  }
-}
-
-.artist-image {
-  margin-bottom: 1rem;
-
-  img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #1db954;
-  }
-}
-
-.artist-info {
-  .artist-name {
-    margin-bottom: 0.5rem;
-    color: white;
-    font-weight: 600;
-  }
-
-  .artist-followers {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .artist-genres {
-    color: #1db954;
-    font-size: 0.8rem;
-    font-weight: 500;
-  }
-}
-
 // Responsive Design
 @media (max-width: 768px) {
   .artist-info {
@@ -461,19 +395,16 @@
     }
   }
 
-  .albums-grid,
-  .artists-grid {
+  .albums-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;
   }
 
-  .album-card,
-  .artist-card {
+  .album-card {
     padding: 1rem;
   }
 
-  .album-image img,
-  .artist-image img {
+  .album-image img {
     width: 100px;
     height: 100px;
   }
@@ -519,8 +450,7 @@
     }
   }
 
-  .albums-grid,
-  .artists-grid {
+  .albums-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }

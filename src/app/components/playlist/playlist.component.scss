@@ -2,7 +2,6 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   color: white;
-  padding-bottom: 2rem;
 }
 
 .playlist-header {
@@ -88,6 +87,36 @@
     color: rgba(255, 255, 255, 0.95);
     line-height: 1.4;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+    .description-text {
+      margin: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .read-more-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      color: rgba(255, 255, 255, 0.9);
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.8);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
   }
 
   .playlist-owner {
@@ -252,17 +281,43 @@
       align-items: center;
       justify-content: center;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: all 0.3s ease;
       cursor: pointer;
 
       i {
         color: white;
         font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      &.playing {
+        opacity: 1;
+        background: rgba(29, 185, 84, 0.8);
+
+        i {
+          color: white;
+          font-size: 1.4rem;
+        }
+      }
+
+      &.searching {
+        opacity: 1;
+        background: rgba(255, 193, 7, 0.8);
+
+        i {
+          color: white;
+          font-size: 1.4rem;
+        }
       }
     }
 
     &:hover .play-overlay {
       opacity: 1;
+      background: rgba(29, 185, 84, 0.8);
+
+      i {
+        transform: scale(1.1);
+      }
     }
   }
 
@@ -296,6 +351,70 @@
     font-weight: 600;
     min-width: 50px;
     text-align: right;
+  }
+
+  .track-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      min-width: fit-content;
+      justify-content: center;
+
+      &.play-btn {
+        background: transparent;
+        border: 1px solid #1db954;
+        color: #1db954;
+        box-shadow: none;
+
+        &:hover {
+          background: #1db954;
+          color: white;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+
+      &.spotify-btn {
+        background: #1db954;
+        color: white;
+        border: none;
+
+        &:hover {
+          background: #1ed760;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+        }
+      }
+
+      i {
+        font-size: 0.9rem;
+      }
+
+      span {
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+    }
   }
 }
 
@@ -355,6 +474,37 @@
 
     .detail-content {
       flex: 1;
+
+      .description-text {
+        p {
+          margin: 0;
+          margin-bottom: 0.5rem;
+          line-height: 1.5;
+        }
+
+        .read-more-btn {
+          background: transparent;
+          border: 1px solid #1db954;
+          color: #1db954;
+          padding: 0.4rem 1rem;
+          border-radius: 20px;
+          font-size: 0.9rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &:hover {
+            background: #1db954;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+        }
+      }
     }
   }
 }

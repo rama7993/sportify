@@ -105,8 +105,19 @@
             <div
               class="play-overlay"
               (click)="playTrack(track); $event.stopPropagation()"
+              [class.playing]="isTrackPlaying(track.id)"
+              [class.searching]="isTrackSearchingPreview(track.id)"
             >
-              <i class="fas fa-play"></i>
+              <i
+                class="fas"
+                [class.fa-play]="
+                  !isTrackPlaying(track.id) &&
+                  !isTrackSearchingPreview(track.id)
+                "
+                [class.fa-pause]="isTrackPlaying(track.id)"
+                [class.fa-spinner]="isTrackSearchingPreview(track.id)"
+                [class.fa-spin]="isTrackSearchingPreview(track.id)"
+              ></i>
             </div>
           </div>
           <div class="track-info">
@@ -119,6 +130,39 @@
             {{ formatDuration(track.duration_ms) }}
           </div>
           <div class="track-popularity">{{ track.popularity }}%</div>
+
+          <!-- Action Buttons -->
+          <div class="track-actions">
+            <button
+              class="action-btn play-btn"
+              (click)="playTrack(track); $event.stopPropagation()"
+              title="Play Preview"
+            >
+              <i
+                class="fas"
+                [class.fa-play]="
+                  !isTrackPlaying(track.id) &&
+                  !isTrackSearchingPreview(track.id)
+                "
+                [class.fa-pause]="isTrackPlaying(track.id)"
+                [class.fa-spinner]="isTrackSearchingPreview(track.id)"
+                [class.fa-spin]="isTrackSearchingPreview(track.id)"
+              ></i>
+              <span>{{
+                isTrackSearchingPreview(track.id) ? "Searching..." : "Play"
+              }}</span>
+            </button>
+
+            <button
+              class="action-btn spotify-btn"
+              (click)="openInSpotify(track); $event.stopPropagation()"
+              *ngIf="track.external_urls?.spotify"
+              title="Open in Spotify"
+            >
+              <i class="fab fa-spotify"></i>
+              <span>Spotify</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>

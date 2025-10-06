@@ -72,7 +72,6 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         this.audioElement.nativeElement.src = track.preview_url;
         this.audioElement.nativeElement.load();
       } else {
-        // Clear the audio source if no preview is available
         this.audioElement.nativeElement.src = '';
         this.audioElement.nativeElement.load();
       }
@@ -185,7 +184,12 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   getImageUrl(images: any[]): string {
     return images && images.length > 0
       ? images[0].url
-      : 'assets/placeholder-album.png';
+      : this.getPlaceholderImage();
+  }
+
+  getPlaceholderImage(): string {
+    // Return a data URI for a simple music note placeholder
+    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTAiIGZpbGw9IiMxZTNjNzIiLz4KPHN2ZyB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEwIDE3VjdMMTYgMTJMMTAgMTdaIiBmaWxsPSIjMWRiOTU0Ii8+Cjwvc3ZnPgo8L3N2Zz4K';
   }
 
   getArtistNames(artists: any[]): string {
@@ -193,18 +197,6 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
       return 'Unknown Artist';
     }
     return artists.map((artist) => artist?.name || 'Unknown').join(', ');
-  }
-
-  hasPreviewUrl(): boolean {
-    return this.spotifyService.hasPreviewUrl(this.currentTrack);
-  }
-
-  getPreviewStatusMessage(): string {
-    return this.spotifyService.getPreviewStatusMessage(this.currentTrack);
-  }
-
-  openInSpotify(): void {
-    this.spotifyService.openInSpotify(this.currentTrack);
   }
 
   // Expose Math to template

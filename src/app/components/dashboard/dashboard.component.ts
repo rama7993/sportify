@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { SpotifyService } from '../../../services/spotify.service';
+import { TrackPlayingService } from '../../../services/track-playing.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -24,7 +25,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private spotifyService: SpotifyService, private router: Router) {}
+  constructor(
+    private spotifyService: SpotifyService,
+    private trackPlayingService: TrackPlayingService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -119,11 +124,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  playTrack(track: any): void {
-    this.spotifyService.playTrack(track);
+  async playTrack(track: any): Promise<void> {
+    await this.trackPlayingService.playTrack(track);
   }
 
-  playAlbumPreview(album: any): void {
+  playAlbumPreview(album: any, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+
     this.playingAlbumId = album.id;
 
     // Get the first track from the album and play it
@@ -144,7 +153,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 images: album.images,
               },
             };
-            this.spotifyService.playTrack(trackWithAlbum);
+
+            // Try to enhance track with preview URL if not available
+            if (!trackWithAlbum.preview_url) {
+              const enhancedTrack =
+                await this.spotifyService.enhanceTrackWithPreview(
+                  trackWithAlbum
+                );
+              this.spotifyService.playTrack(enhancedTrack);
+            } else {
+              this.spotifyService.playTrack(trackWithAlbum);
+            }
           } else {
             console.log('No tracks available for this album');
           }
@@ -158,30 +177,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0
-      ? images[0].url
-      : 'assets/placeholder-album.png';
+    return this.trackPlayingService.getImageUrl(images);
   }
 
   formatDuration(ms: number): string {
-    if (!ms || isNaN(ms)) return '0:00';
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return this.trackPlayingService.formatDuration(ms);
   }
 
   formatNumber(num: number): string {
-    if (!num || isNaN(num)) return '0';
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toString();
+    return this.trackPlayingService.formatNumber(num);
   }
 
   getArtistNames(artists: any[]): string {
-    return artists.map((artist) => artist.name).join(', ');
+    return this.trackPlayingService.getArtistNames(artists);
   }
 
   // Navigation methods
@@ -214,6 +222,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   viewArtist(artist: any): void {
     // Navigate to artist details
     this.router.navigate(['/artist', artist.id]);
+  }
+
+  openInSpotify(album: any): void {
+    if (album.external_urls?.spotify) {
+      window.open(album.external_urls.spotify, '_blank');
+    }
   }
 
   viewCategory(category: any, event?: Event): void {
