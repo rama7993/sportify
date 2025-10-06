@@ -5,11 +5,21 @@ import { SpotifyService, Track } from '../../../services/spotify.service';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import {
+  BreadcrumbComponent,
+  BreadcrumbItem,
+} from '../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [HttpClientModule, FormsModule, RouterLink, CommonModule],
+  imports: [
+    HttpClientModule,
+    FormsModule,
+    RouterLink,
+    CommonModule,
+    BreadcrumbComponent,
+  ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
@@ -27,6 +37,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   loadedResults: number = 0;
   loadingState: 'idle' | 'searching' | 'loading-more' = 'idle';
   searchSubject = new Subject<string>();
+  breadcrumbs: BreadcrumbItem[] = [];
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -36,6 +47,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.setupSearchDebounce();
+    this.setBreadcrumbs();
 
     // Check for query parameters
     this.route.queryParams.subscribe((params) => {
@@ -94,8 +106,8 @@ export class SearchComponent implements OnInit, OnDestroy {
       this.spotifyService
         .searchAll(this.query, limit, this.currentOffset)
         .subscribe({
-          next: (response) => {
-            this.handleSearchResponse(response);
+          next: async (response) => {
+            await this.handleSearchResponse(response);
             this.loading = false;
             this.loadingState = 'idle';
           },
@@ -114,8 +126,8 @@ export class SearchComponent implements OnInit, OnDestroy {
           offset: this.currentOffset,
         })
         .subscribe({
-          next: (response) => {
-            this.handleSearchResponse(response);
+          next: async (response) => {
+            await this.handleSearchResponse(response);
             this.loading = false;
             this.loadingState = 'idle';
           },
@@ -128,7 +140,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
   }
 
-  private handleSearchResponse(response: any): void {
+  private async handleSearchResponse(response: any): Promise<void> {
     let newItemsCount = 0;
 
     if (this.currentOffset === 0) {
@@ -263,5 +275,12 @@ export class SearchComponent implements OnInit, OnDestroy {
       this.albums.length > 0 ||
       this.playlists.length > 0
     );
+  }
+
+  private setBreadcrumbs(): void {
+    this.breadcrumbs = [
+      { label: 'Home', route: ['/'], icon: 'fas fa-home' },
+      { label: 'Search', icon: 'fas fa-search' },
+    ];
   }
 }

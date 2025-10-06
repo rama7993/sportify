@@ -67,9 +67,15 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   }
 
   private loadTrack(track: Track): void {
-    if (this.audioElement && track.preview_url) {
-      this.audioElement.nativeElement.src = track.preview_url;
-      this.audioElement.nativeElement.load();
+    if (this.audioElement) {
+      if (track.preview_url) {
+        this.audioElement.nativeElement.src = track.preview_url;
+        this.audioElement.nativeElement.load();
+      } else {
+        // Clear the audio source if no preview is available
+        this.audioElement.nativeElement.src = '';
+        this.audioElement.nativeElement.load();
+      }
     }
   }
 
@@ -187,6 +193,18 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
       return 'Unknown Artist';
     }
     return artists.map((artist) => artist?.name || 'Unknown').join(', ');
+  }
+
+  hasPreviewUrl(): boolean {
+    return this.spotifyService.hasPreviewUrl(this.currentTrack);
+  }
+
+  getPreviewStatusMessage(): string {
+    return this.spotifyService.getPreviewStatusMessage(this.currentTrack);
+  }
+
+  openInSpotify(): void {
+    this.spotifyService.openInSpotify(this.currentTrack);
   }
 
   // Expose Math to template

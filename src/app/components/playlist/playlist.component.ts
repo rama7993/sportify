@@ -3,11 +3,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BreadcrumbComponent,
+  BreadcrumbItem,
+} from '../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, BreadcrumbComponent],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
 })
@@ -15,6 +19,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   id!: string;
   playlist: any = null;
   tracks: Track[] = [];
+  breadcrumbs: BreadcrumbItem[] = [];
 
   loading = {
     playlist: true,
@@ -58,6 +63,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
         next: (playlist) => {
           this.playlist = playlist;
           this.loading.playlist = false;
+          this.setBreadcrumbs();
         },
         error: (error) => {
           console.error('Error loading playlist:', error);
@@ -72,7 +78,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       .getPlaylistTracks(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: async (response) => {
           this.tracks = response.items
             .map((item: any) => item.track)
             .filter((track: any) => track !== null);
@@ -110,5 +116,13 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     const textarea = document.createElement('textarea');
     textarea.innerHTML = text;
     return textarea.value;
+  }
+
+  private setBreadcrumbs(): void {
+    this.breadcrumbs = [
+      { label: 'Home', route: ['/'], icon: 'fas fa-home' },
+      { label: 'Playlists', route: ['/search'], icon: 'fas fa-list' },
+      { label: this.playlist?.name || 'Playlist', icon: 'fas fa-music' },
+    ];
   }
 }

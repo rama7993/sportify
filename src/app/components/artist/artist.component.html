@@ -1,4 +1,7 @@
 <div class="artist-container">
+  <!-- Breadcrumb Navigation -->
+  <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
   <!-- Artist Header -->
   <div class="artist-header" *ngIf="artist && !loading.artist">
     <div class="container">

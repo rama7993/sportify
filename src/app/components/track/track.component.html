@@ -1,4 +1,7 @@
 <div class="track-container">
+  <!-- Breadcrumb Navigation -->
+  <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
   <!-- Track Header -->
   <div class="track-header" *ngIf="track && !loading">
     <div class="container">
@@ -100,21 +103,118 @@
           </div>
 
           <div class="player-controls">
-            <button class="play-btn" (click)="playTrack()">
-              <i class="fas fa-play"></i>
+            <button
+              class="play-btn"
+              (click)="playTrack()"
+              [disabled]="!hasPreviewUrl()"
+              [class.disabled]="!hasPreviewUrl()"
+            >
+              <i class="fas fa-play" *ngIf="!isPlaying"></i>
+              <i class="fas fa-pause" *ngIf="isPlaying"></i>
             </button>
           </div>
 
-          <div class="audio-container" *ngIf="track.preview_url">
-            <audio controls class="audio-player">
+          <!-- Enhanced Preview Status -->
+          <div class="preview-status-section">
+            <div class="preview-available" *ngIf="hasPreviewUrl()">
+              <div class="status-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="status-content">
+                <span class="status-title">Preview Available</span>
+                <span class="status-subtitle"
+                  >30-second sample ready to play</span
+                >
+              </div>
+            </div>
+
+            <div class="preview-unavailable" *ngIf="!hasPreviewUrl()">
+              <div class="status-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="status-content">
+                <span class="status-title">No Preview Available</span>
+                <span class="status-subtitle"
+                  >This track doesn't have a preview sample</span
+                >
+              </div>
+              <div class="status-actions">
+                <button
+                  class="spotify-link-btn"
+                  (click)="openInSpotify()"
+                  *ngIf="track?.external_urls?.spotify"
+                  title="Open in Spotify"
+                >
+                  <i class="fab fa-spotify"></i>
+                  Open in Spotify
+                </button>
+                <span
+                  class="no-spotify-url"
+                  *ngIf="!track?.external_urls?.spotify"
+                  title="No Spotify URL available"
+                >
+                  <i class="fas fa-info-circle"></i>
+                  No Spotify link available
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Audio Player -->
+          <div class="audio-container" *ngIf="hasPreviewUrl()">
+            <audio
+              controls
+              class="audio-player"
+              #audioPlayer
+              (loadedmetadata)="onAudioLoaded()"
+              (timeupdate)="onTimeUpdate()"
+              (ended)="onAudioEnded()"
+            >
               <source [src]="track.preview_url" type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
           </div>
 
-          <div class="no-preview" *ngIf="!track.preview_url">
-            <i class="fas fa-exclamation-triangle"></i>
-            <p>No preview available for this track</p>
+          <!-- Enhanced Preview Actions -->
+          <div class="preview-actions" *ngIf="!hasPreviewUrl()">
+            <div class="action-group">
+              <button
+                class="action-btn primary-btn"
+                (click)="openInSpotify()"
+                *ngIf="track?.external_urls?.spotify"
+              >
+                <i class="fab fa-spotify"></i>
+                <span>Listen on Spotify</span>
+              </button>
+
+              <button
+                class="action-btn secondary-btn"
+                (click)="tryFindPreview()"
+                [disabled]="isSearchingPreview"
+              >
+                <i class="fas fa-search" *ngIf="!isSearchingPreview"></i>
+                <i
+                  class="fas fa-spinner fa-spin"
+                  *ngIf="isSearchingPreview"
+                ></i>
+                <span>{{
+                  isSearchingPreview ? "Searching..." : "Find Alternative"
+                }}</span>
+              </button>
+            </div>
+
+            <div class="action-info">
+              <i class="fas fa-info-circle"></i>
+              <span>Preview finding via backend API</span>
+              <button
+                class="action-btn test-btn"
+                (click)="testBackend()"
+                title="Test backend connectivity"
+              >
+                <i class="fas fa-vial"></i>
+                <span>Test Backend</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -348,3 +348,68 @@
     min-width: 30px;
   }
 }
+
+// Preview Status Message
+.preview-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 4px;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #ffc107;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  .spotify-link-btn {
+    background: #1db954;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+
+    &:hover {
+      background: #1ed760;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(29, 185, 84, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    i {
+      font-size: 0.8rem;
+    }
+  }
+
+  .no-spotify-url {
+    color: #ff6b6b;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: 0.5rem;
+
+    i {
+      font-size: 0.8rem;
+    }
+  }
+}

@@ -3,11 +3,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BreadcrumbComponent,
+  BreadcrumbItem,
+} from '../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-album',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, BreadcrumbComponent],
   templateUrl: './album.component.html',
   styleUrl: './album.component.scss',
 })
@@ -15,6 +19,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
   id!: string;
   album: any = null;
   tracks: Track[] = [];
+  breadcrumbs: BreadcrumbItem[] = [];
 
   loading = {
     album: true,
@@ -57,6 +62,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.album = response.albums[0];
           this.loading.album = false;
+          this.setBreadcrumbs();
         },
         error: (err) => {
           console.error('Error loading album', err);
@@ -70,7 +76,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
       .getAlbumTracks(this.id, 50, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: async (response) => {
           this.tracks = response.items || [];
           this.loading.tracks = false;
         },
@@ -108,5 +114,13 @@ export class AlbumComponent implements OnInit, OnDestroy {
       return (num / 1000).toFixed(1) + 'K';
     }
     return num.toString();
+  }
+
+  private setBreadcrumbs(): void {
+    this.breadcrumbs = [
+      { label: 'Home', route: ['/'], icon: 'fas fa-home' },
+      { label: 'Albums', route: ['/search'], icon: 'fas fa-compact-disc' },
+      { label: this.album?.name || 'Album', icon: 'fas fa-music' },
+    ];
   }
 }

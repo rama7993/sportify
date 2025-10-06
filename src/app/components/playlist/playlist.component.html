@@ -1,4 +1,7 @@
 <div class="playlist-container">
+  <!-- Breadcrumb Navigation -->
+  <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
   <!-- Playlist Header -->
   <div class="playlist-header" *ngIf="playlist && !loading.playlist">
     <div class="container">

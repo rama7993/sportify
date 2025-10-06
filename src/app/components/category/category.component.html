@@ -1,15 +1,34 @@
 <div class="category-container">
+  <!-- Breadcrumb Navigation -->
+  <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
   <!-- Category Header -->
   <div class="category-header">
     <div class="container">
       <div class="category-info">
         <div class="category-icon">
-          <i class="fas fa-th-large"></i>
+          <img
+            *ngIf="category?.icons && category.icons.length > 0"
+            [src]="getCategoryIconUrl(category.icons)"
+            [alt]="category?.name || categoryId"
+            class="category-icon-image"
+          />
+          <i
+            *ngIf="!category?.icons || category.icons.length === 0"
+            class="fas fa-th-large"
+          ></i>
         </div>
         <div class="category-details">
-          <h1 class="category-name">{{ categoryId | titlecase }}</h1>
+          <h1 class="category-name">
+            {{ category?.name || (categoryId | titlecase) }}
+          </h1>
           <p class="category-description">
-            Discover playlists in the {{ categoryId }} category
+            {{
+              category?.description ||
+                "Discover playlists in the " +
+                  (category?.name || categoryId) +
+                  " category"
+            }}
           </p>
         </div>
       </div>
@@ -18,61 +37,75 @@
 
   <!-- Playlists Section -->
   <section class="section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <i class="fas fa-list"></i> Featured Playlists
-      </h2>
-    </div>
-
-    <!-- Loading State for Playlists -->
-    <div class="playlists-loading" *ngIf="loading.playlists">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-list"></i> Featured Playlists
+        </h2>
       </div>
-      <p>Loading playlists...</p>
-    </div>
 
-    <!-- Playlists Grid -->
-    <div
-      class="playlists-grid"
-      *ngIf="!loading.playlists && playlists.length > 0"
-    >
+      <!-- Loading State for Playlists -->
+      <div class="playlists-loading" *ngIf="loading.playlists">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading playlists...</p>
+      </div>
+
+      <!-- Playlists Grid -->
       <div
-        class="playlist-card"
-        *ngFor="let playlist of playlists"
-        [routerLink]="['/playlist', playlist.id]"
+        class="playlists-grid"
+        *ngIf="!loading.playlists && playlists.length > 0"
       >
-        <div class="playlist-image">
-          <img
-            [src]="getPlaylistImageUrl(playlist?.images || [])"
-            [alt]="playlist?.name || 'Playlist'"
-          />
-        </div>
-        <div class="playlist-info">
-          <h5 class="playlist-name">
-            {{ playlist?.name || "Unknown Playlist" }}
-          </h5>
-          <p class="playlist-owner">
-            by {{ playlist?.owner?.display_name || "Unknown Creator" }}
-          </p>
-          <p class="playlist-tracks">
-            {{ playlist?.tracks?.total || 0 }} tracks
-          </p>
+        <div
+          class="playlist-card"
+          *ngFor="let playlist of playlists"
+          [routerLink]="['/playlist', playlist.id]"
+        >
+          <div class="playlist-image">
+            <img
+              [src]="getPlaylistImageUrl(playlist?.images || [])"
+              [alt]="playlist?.name || 'Playlist'"
+            />
+          </div>
+          <div class="playlist-info">
+            <h5 class="playlist-name">
+              {{ playlist?.name || "Unknown Playlist" }}
+            </h5>
+            <p class="playlist-owner">
+              by {{ playlist?.owner?.display_name || "Unknown Creator" }}
+            </p>
+            <p class="playlist-tracks">
+              {{ playlist?.tracks?.total || 0 }} tracks
+            </p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- No Playlists -->
-    <div
-      class="no-playlists"
-      *ngIf="!loading.playlists && playlists.length === 0"
-    >
-      <div class="no-playlists-content">
-        <i class="fas fa-music"></i>
-        <h3>No playlists available</h3>
-        <p>
-          This category doesn't have any playlists or they couldn't be loaded.
-        </p>
+      <!-- Error State -->
+      <div class="error-state" *ngIf="!loading.playlists && errorMessage">
+        <div class="error-content">
+          <i class="fas fa-exclamation-triangle"></i>
+          <h3>Oops! Something went wrong</h3>
+          <p>{{ errorMessage }}</p>
+          <button class="btn btn-primary" (click)="loadCategoryData()">
+            <i class="fas fa-refresh"></i> Try Again
+          </button>
+        </div>
+      </div>
+
+      <!-- No Playlists -->
+      <div
+        class="no-playlists"
+        *ngIf="!loading.playlists && playlists.length === 0 && !errorMessage"
+      >
+        <div class="no-playlists-content">
+          <i class="fas fa-music"></i>
+          <h3>No playlists available</h3>
+          <p>
+            This category doesn't have any playlists or they couldn't be loaded.
+          </p>
+        </div>
       </div>
     </div>
   </section>

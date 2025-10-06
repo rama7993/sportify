@@ -163,8 +163,9 @@
       <div class="category-grid" *ngIf="!loading.categories">
         <div
           class="category-card"
-          *ngFor="let category of categories"
-          (click)="viewCategory(category)"
+          *ngFor="let category of categories; trackBy: trackByCategoryId"
+          (click)="viewCategory(category, $event)"
+          [title]="'Click to view ' + category.name + ' playlists'"
         >
           <div class="category-image">
             <img [src]="getImageUrl(category.icons)" [alt]="category.name" />

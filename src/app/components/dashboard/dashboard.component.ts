@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .getNewReleases(8, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: async (response) => {
           this.newReleases = response.albums?.items || [];
           this.loading.newReleases = false;
         },
@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private loadCategories(): void {
     // Load music categories for discovery
     this.spotifyService
-      .getCategories(8, 0)
+      .getCategories(8, 0, 'en_IN')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -131,18 +131,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .getAlbumTracks(album.id, 1, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: async (response) => {
           const tracks = response.items || [];
           if (tracks.length > 0) {
+            const track = tracks[0];
+
             // Create a track object with album info
-            const track = {
-              ...tracks[0],
+            const trackWithAlbum = {
+              ...track,
               album: {
                 ...album,
                 images: album.images,
               },
             };
-            this.spotifyService.playTrack(track);
+            this.spotifyService.playTrack(trackWithAlbum);
           } else {
             console.log('No tracks available for this album');
           }
@@ -214,9 +216,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/artist', artist.id]);
   }
 
-  viewCategory(category: any): void {
+  viewCategory(category: any, event?: Event): void {
+    // Prevent default behavior
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     // Navigate to category playlists
-    this.router.navigate(['/category', category.id]);
+    if (category && category.id) {
+      this.router.navigate(['/category', category.id]);
+    }
+  }
+
+  trackByCategoryId(index: number, category: any): string {
+    return category ? category.id : index.toString();
   }
 
   isAlbumPlaying(albumId: string): boolean {

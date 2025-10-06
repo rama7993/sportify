@@ -3,11 +3,15 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BreadcrumbComponent,
+  BreadcrumbItem,
+} from '../breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-artist',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, BreadcrumbComponent],
   templateUrl: './artist.component.html',
   styleUrl: './artist.component.scss',
 })
@@ -17,6 +21,7 @@ export class ArtistComponent implements OnInit, OnDestroy {
   topTracks: Track[] = [];
   albums: any[] = [];
   relatedArtists: any[] = [];
+  breadcrumbs: BreadcrumbItem[] = [];
 
   loading = {
     artist: true,
@@ -63,6 +68,7 @@ export class ArtistComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.artist = response.artists[0];
           this.loading.artist = false;
+          this.setBreadcrumbs();
         },
         error: (err) => {
           console.error('Error loading artist', err);
@@ -76,7 +82,7 @@ export class ArtistComponent implements OnInit, OnDestroy {
       .getArtistTopTracks(this.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: async (response) => {
           this.topTracks = response.tracks || [];
           this.loading.topTracks = false;
         },
@@ -145,5 +151,13 @@ export class ArtistComponent implements OnInit, OnDestroy {
       return (num / 1000).toFixed(1) + 'K';
     }
     return num.toString();
+  }
+
+  private setBreadcrumbs(): void {
+    this.breadcrumbs = [
+      { label: 'Home', route: ['/'], icon: 'fas fa-home' },
+      { label: 'Artists', route: ['/search'], icon: 'fas fa-users' },
+      { label: this.artist?.name || 'Artist', icon: 'fas fa-music' },
+    ];
   }
 }

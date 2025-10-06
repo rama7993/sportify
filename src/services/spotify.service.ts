@@ -1,9 +1,10 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { map, catchError, switchMap, tap } from 'rxjs/operators';
+import { map, catchError, switchMap } from 'rxjs/operators';
 import { Buffer } from 'buffer';
 import { environment } from '../environments/environment';
+import { BackendService, PreviewRequest } from './backend.service';
 
 export interface SearchOptions {
   query: string;
@@ -79,315 +80,14 @@ export class SpotifyService {
   public currentTime$ = this.currentTimeSubject.asObservable();
   public duration$ = this.durationSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private backendService: BackendService
+  ) {}
 
-  search(options: SearchOptions): Observable<SearchResponse> {
-    const params = new HttpParams()
-      .set('q', options.query)
-      .set('type', options.type || 'track')
-      .set('limit', (options.limit || 20).toString())
-      .set('offset', (options.offset || 0).toString())
-      .set('market', options.market || 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<SearchResponse>(`${this.apiUrl}/search`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  searchAll(
-    query: string,
-    limit: number = 20,
-    offset: number = 0
-  ): Observable<any> {
-    const params = new HttpParams()
-      .set('q', query)
-      .set('type', 'track,artist,album,playlist')
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/search`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  getTracks(ids: string): Observable<any> {
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/tracks`, {
-          headers: this.setAuthHeader(),
-          params: new HttpParams().set('ids', ids),
-        })
-      )
-    );
-  }
-
-  getArtists(ids: string): Observable<any> {
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/artists`, {
-          headers: this.setAuthHeader(),
-          params: new HttpParams().set('ids', ids),
-        })
-      )
-    );
-  }
-
-  getAlbums(ids: string): Observable<any> {
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/albums`, {
-          headers: this.setAuthHeader(),
-          params: new HttpParams().set('ids', ids),
-        })
-      )
-    );
-  }
-
-  getArtistAlbums(
-    artistId: string,
-    limit: number = 20,
-    offset: number = 0
-  ): Observable<any> {
-    const params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/artists/${artistId}/albums`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  // Get artist's top tracks
-  getArtistTopTracks(artistId: string, market: string = 'IN'): Observable<any> {
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/artists/${artistId}/top-tracks`, {
-          headers: this.setAuthHeader(),
-          params: new HttpParams().set('market', market),
-        })
-      )
-    );
-  }
-
-  // Get related artists
-  getRelatedArtists(artistId: string): Observable<any> {
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(
-          `${this.apiUrl}/artists/${artistId}/related-artists`,
-          {
-            headers: this.setAuthHeader(),
-          }
-        )
-      )
-    );
-  }
-
-  // Get album tracks
-  getAlbumTracks(
-    albumId: string,
-    limit: number = 20,
-    offset: number = 0
-  ): Observable<any> {
-    const params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/albums/${albumId}/tracks`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  // Get featured playlists
-  getFeaturedPlaylists(
-    limit: number = 20,
-    offset: number = 0
-  ): Observable<any> {
-    const params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/browse/featured-playlists`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  // Get new releases
-  getNewReleases(limit: number = 20, offset: number = 0): Observable<any> {
-    const params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/browse/new-releases`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  // Get categories
-  getCategories(limit: number = 20, offset: number = 0): Observable<any> {
-    const params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/browse/categories`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  // Get category playlists
-  getCategoryPlaylists(
-    categoryId: string,
-    limit: number = 20,
-    offset: number = 0
-  ): Observable<any> {
-    const params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(
-          `${this.apiUrl}/browse/categories/${categoryId}/playlists`,
-          {
-            headers: this.setAuthHeader(),
-            params,
-          }
-        )
-      )
-    );
-  }
-
-  // Get playlist details
-  getPlaylist(playlistId: string): Observable<any> {
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/playlists/${playlistId}`, {
-          headers: this.setAuthHeader(),
-        })
-      )
-    );
-  }
-
-  // Get playlist tracks
-  getPlaylistTracks(
-    playlistId: string,
-    limit: number = 20,
-    offset: number = 0
-  ): Observable<any> {
-    const params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('offset', offset.toString())
-      .set('market', 'IN');
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/playlists/${playlistId}/tracks`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  // Get recommendations
-  getRecommendations(
-    seedTracks?: string[],
-    seedArtists?: string[],
-    seedGenres?: string[],
-    limit: number = 20
-  ): Observable<any> {
-    let params = new HttpParams()
-      .set('limit', limit.toString())
-      .set('market', 'IN');
-
-    if (seedTracks && seedTracks.length > 0) {
-      params = params.set('seed_tracks', seedTracks.join(','));
-    }
-    if (seedArtists && seedArtists.length > 0) {
-      params = params.set('seed_artists', seedArtists.join(','));
-    }
-    if (seedGenres && seedGenres.length > 0) {
-      params = params.set('seed_genres', seedGenres.join(','));
-    }
-
-    return this.ensureAccessToken().pipe(
-      switchMap(() =>
-        this.http.get<any>(`${this.apiUrl}/recommendations`, {
-          headers: this.setAuthHeader(),
-          params,
-        })
-      )
-    );
-  }
-
-  // Audio player methods
-  playTrack(track: Track): void {
-    this.currentTrackSubject.next(track);
-    this.isPlayingSubject.next(true);
-  }
-
-  pauseTrack(): void {
-    this.isPlayingSubject.next(false);
-  }
-
-  resumeTrack(): void {
-    this.isPlayingSubject.next(true);
-  }
-
-  stopTrack(): void {
-    this.isPlayingSubject.next(false);
-    this.currentTimeSubject.next(0);
-  }
-
-  updateCurrentTime(time: number): void {
-    this.currentTimeSubject.next(time);
-  }
-
-  updateDuration(duration: number): void {
-    this.durationSubject.next(duration);
-  }
+  // ========================================
+  // AUTHENTICATION
+  // ========================================
 
   private getAccessToken(): Observable<string> {
     const headers = new HttpHeaders()
@@ -435,5 +135,493 @@ export class SpotifyService {
       throw new Error('Access token is not set');
     }
     return new HttpHeaders().set('Authorization', 'Bearer ' + this.accessToken);
+  }
+
+  // ========================================
+  // SEARCH API
+  // ========================================
+
+  search(options: SearchOptions): Observable<SearchResponse> {
+    const params = new HttpParams()
+      .set('q', options.query)
+      .set('type', options.type || 'track')
+      .set('limit', (options.limit || 20).toString())
+      .set('offset', (options.offset || 0).toString())
+      .set('market', options.market || 'IN');
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<SearchResponse>(`${this.apiUrl}/search`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  searchAll(
+    query: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('q', query)
+      .set('type', 'track,artist,album,playlist')
+      .set('limit', limit.toString())
+      .set('offset', offset.toString())
+      .set('market', 'IN');
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/search`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  // ========================================
+  // CATEGORIES API
+  // ========================================
+
+  getCategories(
+    limit: number = 20,
+    offset: number = 0,
+    locale: string = 'en_IN'
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('locale', locale)
+      .set('limit', limit.toString())
+      .set('offset', offset.toString());
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/browse/categories`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  getCategory(categoryId: string, locale: string = 'en_IN'): Observable<any> {
+    const params = new HttpParams().set('locale', locale);
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/browse/categories/${categoryId}`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  // Get playlists by category using search API (replacement for deprecated category playlists)
+  getPlaylistsByCategory(
+    categoryId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
+    const searchTerms = this.getCategorySearchTerms(categoryId);
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.search({
+          query: searchTerms,
+          type: 'playlist',
+          limit: limit,
+          offset: offset,
+        })
+      )
+    );
+  }
+
+  private getCategorySearchTerms(categoryId: string): string {
+    const categoryMappings: { [key: string]: string } = {
+      pop: 'pop music',
+      rock: 'rock music',
+      'hip-hop': 'hip hop rap',
+      jazz: 'jazz music',
+      classical: 'classical music',
+      electronic: 'electronic dance music',
+      country: 'country music',
+      'r-b': 'r&b soul',
+      blues: 'blues music',
+      folk: 'folk music',
+      reggae: 'reggae music',
+      funk: 'funk music',
+      soul: 'soul music',
+      disco: 'disco music',
+      punk: 'punk rock',
+      indie: 'indie alternative',
+      alternative: 'alternative rock',
+      metal: 'heavy metal',
+      gospel: 'gospel music',
+      latin: 'latin music',
+      world: 'world music',
+      'new-age': 'new age music',
+      ambient: 'ambient music',
+      trance: 'trance music',
+      house: 'house music',
+      techno: 'techno music',
+      dubstep: 'dubstep music',
+      'drum-and-bass': 'drum and bass',
+      trap: 'trap music',
+      'lo-fi': 'lo-fi hip hop',
+      chill: 'chill music',
+      focus: 'focus study music',
+      workout: 'workout fitness music',
+      party: 'party music',
+      romance: 'romantic music',
+      sleep: 'sleep relaxation music',
+      travel: 'travel music',
+      kids: 'kids children music',
+      comedy: 'comedy music',
+      soundtrack: 'movie soundtrack',
+      holiday: 'holiday christmas music',
+      dinner: 'dinner music',
+      equal: 'equal music',
+      mood: 'mood music',
+      decades: 'decades music',
+      instrumental: 'instrumental music',
+      acoustic: 'acoustic music',
+      live: 'live music',
+      cover: 'cover songs',
+      remix: 'remix music',
+      telugu: 'telugu music',
+      tamil: 'tamil music',
+      hindi: 'hindi music',
+      malayalam: 'malayalam music',
+      kannada: 'kannada music',
+    };
+
+    const lowerCategoryId = categoryId.toLowerCase();
+    return categoryMappings[lowerCategoryId] || categoryId.replace(/-/g, ' ');
+  }
+
+  // ========================================
+  // TRACKS API
+  // ========================================
+
+  getTracks(ids: string): Observable<any> {
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/tracks`, {
+          headers: this.setAuthHeader(),
+          params: new HttpParams().set('ids', ids),
+        })
+      )
+    );
+  }
+
+  // ========================================
+  // ARTISTS API
+  // ========================================
+
+  getArtists(ids: string): Observable<any> {
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/artists`, {
+          headers: this.setAuthHeader(),
+          params: new HttpParams().set('ids', ids),
+        })
+      )
+    );
+  }
+
+  getArtistAlbums(
+    artistId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('offset', offset.toString())
+      .set('market', 'IN');
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/artists/${artistId}/albums`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  getArtistTopTracks(artistId: string, market: string = 'IN'): Observable<any> {
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/artists/${artistId}/top-tracks`, {
+          headers: this.setAuthHeader(),
+          params: new HttpParams().set('market', market),
+        })
+      )
+    );
+  }
+
+  getRelatedArtists(artistId: string): Observable<any> {
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(
+          `${this.apiUrl}/artists/${artistId}/related-artists`,
+          {
+            headers: this.setAuthHeader(),
+          }
+        )
+      )
+    );
+  }
+
+  // ========================================
+  // ALBUMS API
+  // ========================================
+
+  getAlbums(ids: string): Observable<any> {
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/albums`, {
+          headers: this.setAuthHeader(),
+          params: new HttpParams().set('ids', ids),
+        })
+      )
+    );
+  }
+
+  getAlbumTracks(
+    albumId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('offset', offset.toString())
+      .set('market', 'IN');
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/albums/${albumId}/tracks`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  getNewReleases(limit: number = 20, offset: number = 0): Observable<any> {
+    const params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('offset', offset.toString())
+      .set('market', 'IN');
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/browse/new-releases`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  // ========================================
+  // PLAYLISTS API
+  // ========================================
+
+  getPlaylist(playlistId: string): Observable<any> {
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/playlists/${playlistId}`, {
+          headers: this.setAuthHeader(),
+        })
+      )
+    );
+  }
+
+  getPlaylistTracks(
+    playlistId: string,
+    limit: number = 20,
+    offset: number = 0
+  ): Observable<any> {
+    const params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('offset', offset.toString())
+      .set('market', 'IN');
+
+    return this.ensureAccessToken().pipe(
+      switchMap(() =>
+        this.http.get<any>(`${this.apiUrl}/playlists/${playlistId}/tracks`, {
+          headers: this.setAuthHeader(),
+          params,
+        })
+      )
+    );
+  }
+
+  // ========================================
+  // AUDIO PLAYER METHODS
+  // ========================================
+
+  playTrack(track: Track): void {
+    this.currentTrackSubject.next(track);
+    this.isPlayingSubject.next(true);
+  }
+
+  pauseTrack(): void {
+    this.isPlayingSubject.next(false);
+  }
+
+  resumeTrack(): void {
+    this.isPlayingSubject.next(true);
+  }
+
+  stopTrack(): void {
+    this.isPlayingSubject.next(false);
+    this.currentTimeSubject.next(0);
+  }
+
+  updateCurrentTime(time: number): void {
+    this.currentTimeSubject.next(time);
+  }
+
+  updateDuration(duration: number): void {
+    this.durationSubject.next(duration);
+  }
+
+  // ========================================
+  // PREVIEW URL UTILITIES
+  // ========================================
+
+  // Method to check if a track has a working preview URL
+  hasPreviewUrl(track: any): boolean {
+    return !!(track && track.preview_url && track.preview_url.trim() !== '');
+  }
+
+  // Method to get a user-friendly message for tracks without previews
+  getPreviewStatusMessage(track: any): string {
+    if (this.hasPreviewUrl(track)) {
+      return 'Preview available';
+    }
+    return 'Preview not available - Backend API integration needed';
+  }
+
+  // Method to get Spotify URL for a track
+  getSpotifyUrl(track: any): string | null {
+    return track?.external_urls?.spotify || null;
+  }
+
+  // Method to open track in Spotify
+  openInSpotify(track: any): void {
+    const spotifyUrl = this.getSpotifyUrl(track);
+    if (spotifyUrl) {
+      window.open(spotifyUrl, '_blank');
+    } else {
+      console.warn('No Spotify URL available for this track');
+    }
+  }
+
+  // ========================================
+  // BACKEND INTEGRATION
+  // ========================================
+
+  /**
+   * Find preview URL using backend API
+   */
+  async findPreviewWithBackend(
+    trackName: string,
+    artistName?: string
+  ): Promise<string | null> {
+    try {
+      const request: PreviewRequest = { trackName, artistName };
+      const response = await this.backendService
+        .getPreviewUrl(request)
+        .toPromise();
+
+      if (response?.success && response.previewUrl) {
+        console.log('✅ Preview found via backend:', response.previewUrl);
+        return response.previewUrl;
+      }
+
+      console.log('❌ No preview found via backend');
+      return null;
+    } catch (error) {
+      console.error('❌ Backend preview search failed:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Enhanced track object with preview URL using backend
+   */
+  async enhanceTrackWithPreview(track: any): Promise<any> {
+    // If track already has a preview URL, return as is
+    if (track.preview_url) {
+      return track;
+    }
+
+    try {
+      let previewUrl = null;
+
+      if (track.name && track.artists && track.artists.length > 0) {
+        previewUrl = await this.findPreviewWithBackend(
+          track.name,
+          track.artists[0].name
+        );
+      } else if (track.name) {
+        previewUrl = await this.findPreviewWithBackend(track.name);
+      }
+
+      return {
+        ...track,
+        preview_url: previewUrl,
+      };
+    } catch (error) {
+      console.warn(`Failed to enhance track ${track.id} with preview:`, error);
+      return track;
+    }
+  }
+
+  /**
+   * Get enhanced tracks with working preview URLs using backend
+   */
+  async getEnhancedTracks(tracks: any[]): Promise<any[]> {
+    if (!tracks || tracks.length === 0) {
+      return tracks;
+    }
+
+    try {
+      const enhancedTracks = await Promise.all(
+        tracks.map((track) => this.enhanceTrackWithPreview(track))
+      );
+      return enhancedTracks;
+    } catch (error) {
+      console.warn('Failed to enhance tracks with preview URLs:', error);
+      return tracks; // Return original tracks if enhancement fails
+    }
+  }
+
+  /**
+   * Test backend connectivity
+   */
+  async testBackend(): Promise<void> {
+    try {
+      const response = await this.backendService.testBackend().toPromise();
+      if (response?.success) {
+        console.log('✅ Backend test successful:', response.message);
+      } else {
+        console.error('❌ Backend test failed:', response?.error);
+      }
+    } catch (error) {
+      console.error('❌ Backend test error:', error);
+    }
+  }
+
+  /**
+   * Check if backend is available
+   */
+  isBackendAvailable(): Observable<boolean> {
+    return this.backendService.isBackendAvailable();
   }
 }

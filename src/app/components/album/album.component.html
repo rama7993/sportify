@@ -1,4 +1,7 @@
 <div class="album-container">
+  <!-- Breadcrumb Navigation -->
+  <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
   <!-- Album Header -->
   <div class="album-header" *ngIf="album && !loading.album">
     <div class="container">
