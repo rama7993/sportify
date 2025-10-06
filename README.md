@@ -1,6 +1,6 @@
 # 🎵 Sportify - Spotify Clone
 
-A modern, responsive music discovery platform built with Angular 17, featuring real-time Spotify API integration, advanced search capabilities, and a beautiful UI with comprehensive music browsing experience. This project showcases professional Angular development skills with a complete music streaming application that mimics Spotify's core functionality.
+A modern, responsive music discovery platform built with Angular 17, featuring real-time Spotify API integration, advanced search capabilities, and a beautiful UI with comprehensive music browsing experience.
 
 ## ✨ Features
 
@@ -216,24 +216,6 @@ The app can be deployed to any platform that supports Node.js and Angular:
 - **Typography**: Clean, readable fonts with proper hierarchy
 
 ## 🔧 Development
-
-### Project Structure
-
-```
-src/
-├── app/
-│   ├── components/
-│   │   ├── dashboard/          # Enhanced dashboard with real APIs
-│   │   ├── search/             # Advanced search with smart pagination
-│   │   ├── artist/             # Artist detail pages
-│   │   ├── track/              # Track detail pages
-│   │   ├── album/              # Album detail pages
-│   │   └── audio-player/       # Global audio player
-│   ├── services/
-│   │   └── spotify.service.ts  # Comprehensive Spotify API integration
-│   └── app.routes.ts           # Routing configuration
-└── environments/               # Environment configurations
-```
 
 ### 🛠️ Technical Implementation
 
