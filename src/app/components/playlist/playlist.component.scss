@@ -1,14 +1,15 @@
 .playlist-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  color: white;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 4rem;
 }
 
 .playlist-header {
   background: linear-gradient(
-    135deg,
-    rgba(29, 185, 84, 0.9) 0%,
-    rgba(30, 215, 96, 0.9) 100%
+    180deg,
+    rgba(29, 185, 84, 0.15) 0%,
+    transparent 100%
   );
   padding: 3rem 0;
   margin-bottom: 2rem;
@@ -22,20 +23,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(0, 0, 0, 0.1) 0%,
-      rgba(0, 0, 0, 0.05) 100%
-    );
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--bg) 100%);
     pointer-events: none;
   }
 
   &.loading {
-    background: linear-gradient(
-      135deg,
-      rgba(30, 60, 114, 0.8) 0%,
-      rgba(42, 82, 152, 0.8) 100%
-    );
+    background: transparent;
   }
 }
 
@@ -648,11 +641,14 @@
 
   .playlist-details .playlist-meta {
     justify-content: center;
-    gap: 1rem;
+    gap: 0.5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
 
     .meta-item {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.9rem;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.85rem;
+      width: auto;
     }
   }
 
@@ -719,34 +715,47 @@
   }
 
   .playlist-details .playlist-meta {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 
   .track-item {
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 20px 40px 1fr auto;
+    grid-template-areas:
+      "num img info meta"
+      ". . actions actions";
+    align-items: center;
+    gap: 0.5rem 0.75rem;
 
     .track-number {
-      order: 1;
+      grid-area: num;
+      text-align: center;
     }
 
     .track-image {
-      order: 2;
+      grid-area: img;
     }
 
     .track-info {
-      order: 3;
-      flex: 1;
-      min-width: 0;
+      grid-area: info;
+    }
+
+    .track-actions {
+      grid-area: actions;
+      justify-content: flex-start;
+      margin-top: 0;
     }
 
     .track-duration {
-      order: 4;
+      grid-area: meta;
+      text-align: right;
+      font-size: 0.8rem;
     }
 
     .track-popularity {
-      order: 5;
+      display: none;
     }
   }
 }

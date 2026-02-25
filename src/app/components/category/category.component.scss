@@ -1,9 +1,10 @@
 .category-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  color: white;
+  background: var(--bg);
+  color: var(--text);
   overflow-x: hidden;
   width: 100%;
+  padding-bottom: 4rem;
 }
 
 .container {
@@ -16,9 +17,9 @@
 
 .category-header {
   background: linear-gradient(
-    135deg,
-    rgba(29, 185, 84, 0.8) 0%,
-    rgba(30, 215, 96, 0.8) 100%
+    180deg,
+    rgba(29, 185, 84, 0.15) 0%,
+    transparent 100%
   );
   padding: 3rem 0;
   margin-bottom: 2rem;

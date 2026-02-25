@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { SpotifyService } from '../../../services/spotify.service';
-import { TrackPlayingService } from '../../../services/track-playing.service';
+import { TrackPlayingService } from '../../services/track-playing.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -25,10 +25,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  activeCategory: string = 'All';
+  trendingTracks: any[] = [];
+
   constructor(
     private spotifyService: SpotifyService,
     private trackPlayingService: TrackPlayingService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -41,16 +44,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadDashboardData(): void {
-    // Load real data from Spotify API using proper endpoints
     this.loadNewReleases();
     this.loadTrendingArtists();
     this.loadCategories();
+    this.loadTrendingTracks();
   }
 
   private loadNewReleases(): void {
-    // Use Spotify's new releases API
     this.spotifyService
-      .getNewReleases(8, 0)
+      .getNewReleases(6, 0)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async (response) => {
@@ -65,8 +67,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
   }
 
+  private loadTrendingTracks(): void {
+    this.spotifyService
+      .search({ query: 'global top 50', type: 'track', limit: 7 })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.trendingTracks = response.tracks?.items || [];
+        },
+        error: (err) => {
+          console.error('Error loading trending tracks', err);
+          this.trendingTracks = [];
+        },
+      });
+  }
+
   private loadTrendingArtists(): void {
-    // Search for popular artists using multiple queries to get diverse results
     this.spotifyService
       .search({ query: 'top artists', type: 'artist', limit: 4 })
       .pipe(takeUntil(this.destroy$))
@@ -74,26 +90,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (response) => {
           const artists1 = response.artists?.items || [];
 
-          // Get more artists with different search terms
           this.spotifyService
             .search({ query: 'trending artists', type: 'artist', limit: 4 })
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response2) => {
                 const artists2 = response2.artists?.items || [];
-                // Combine and deduplicate artists
                 const allArtists = [...artists1, ...artists2];
                 this.trendingArtists = allArtists
                   .filter(
                     (artist, index, self) =>
-                      index === self.findIndex((a) => a.id === artist.id)
+                      index === self.findIndex((a) => a.id === artist.id),
                   )
-                  .slice(0, 8);
+                  .slice(0, 6);
                 this.loading.artists = false;
               },
               error: (err) => {
                 console.error('Error loading additional artists', err);
-                this.trendingArtists = artists1.slice(0, 8);
+                this.trendingArtists = artists1.slice(0, 6);
                 this.loading.artists = false;
               },
             });
@@ -107,7 +121,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadCategories(): void {
-    // Load music categories for discovery
     this.spotifyService
       .getCategories(8, 0, 'en_IN')
       .pipe(takeUntil(this.destroy$))
@@ -135,7 +148,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.playingAlbumId = album.id;
 
-    // Get the first track from the album and play it
     this.spotifyService
       .getAlbumTracks(album.id, 1, 0)
       .pipe(takeUntil(this.destroy$))
@@ -145,7 +157,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (tracks.length > 0) {
             const track = tracks[0];
 
-            // Create a track object with album info
             const trackWithAlbum = {
               ...track,
               album: {
@@ -154,11 +165,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
               },
             };
 
-            // Try to enhance track with preview URL if not available
             if (!trackWithAlbum.preview_url) {
               const enhancedTrack =
                 await this.spotifyService.enhanceTrackWithPreview(
-                  trackWithAlbum
+                  trackWithAlbum,
                 );
               this.spotifyService.playTrack(enhancedTrack);
             } else {
@@ -194,33 +204,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Navigation methods
   viewAllAlbums(): void {
-    // Navigate to search with album filter for new releases
     this.router.navigate(['/search'], {
       queryParams: { q: 'new album 2024', type: 'album' },
     });
   }
 
+  viewAllTracks(): void {
+    this.router.navigate(['/search'], {
+      queryParams: { q: 'global top 50', type: 'track' },
+    });
+  }
+
   viewAllArtists(): void {
-    // Navigate to search with artist filter for trending artists
     this.router.navigate(['/search'], {
       queryParams: { q: 'popular artists', type: 'artist' },
     });
   }
 
   viewAllCategories(): void {
-    // Navigate to search with categories
     this.router.navigate(['/search'], {
       queryParams: { q: 'music genres', type: 'playlist' },
     });
   }
 
   viewAlbum(album: any): void {
-    // Navigate to album details
     this.router.navigate(['/album', album.id]);
   }
 
   viewArtist(artist: any): void {
-    // Navigate to artist details
     this.router.navigate(['/artist', artist.id]);
   }
 
@@ -231,13 +242,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   viewCategory(category: any, event?: Event): void {
-    // Prevent default behavior
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    // Navigate to category playlists
     if (category && category.id) {
       this.router.navigate(['/category', category.id]);
     }
@@ -249,5 +258,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   isAlbumPlaying(albumId: string): boolean {
     return this.playingAlbumId === albumId;
+  }
+
+  filterCategory(category: string): void {
+    this.activeCategory = category;
+    if (category === 'All') {
+      this.loadDashboardData();
+    } else {
+    }
+  }
+
+  scrollToTrending(): void {
+    const element = document.querySelector('.sec-r');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }

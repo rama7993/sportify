@@ -1,184 +1,175 @@
 <div class="dashboard-container">
   <!-- Hero Section -->
-  <div class="hero-section">
-    <div class="container">
-      <div class="hero-content">
-        <h1 class="hero-title">🎵 Welcome to Sportify 🎵</h1>
-        <p class="hero-subtitle">
-          Your ultimate music discovery platform. Explore new releases, trending
-          artists, and personalized recommendations powered by Spotify's vast
-          music library.
-        </p>
-        <div class="hero-stats">
-          <div class="stat-item">
-            <i class="fas fa-music"></i>
-            <span>Millions of Songs</span>
+  <section class="hero">
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="hero-inner">
+      <div class="h-badge">
+        <span class="pulse"></span>Now Streaming Worldwide
+      </div>
+      <h1>Music without<br />limits.</h1>
+      <p>
+        Discover millions of tracks, follow your favorite artists, and let the
+        music find you — all in one place.
+      </p>
+      <div class="h-stats">
+        <div class="h-stat">
+          <span class="h-num">80M+</span><span class="h-lbl">Songs</span>
+        </div>
+        <div class="h-div"></div>
+        <div class="h-stat">
+          <span class="h-num">4M+</span><span class="h-lbl">Artists</span>
+        </div>
+        <div class="h-div"></div>
+        <div class="h-stat">
+          <span class="h-num">200+</span><span class="h-lbl">Countries</span>
+        </div>
+      </div>
+      <div class="h-btns">
+        <button class="btn-p" (click)="scrollToTrending()">
+          <i class="fas fa-play"></i> Start Listening
+        </button>
+        <button class="btn-s" (click)="scrollToTrending()">
+          <i class="fas fa-fire"></i> What's Trending
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Genres -->
+  <div class="wrap">
+    <div class="genres">
+      <button
+        class="g-pill"
+        [class.on]="activeCategory === 'All'"
+        (click)="filterCategory('All')"
+      >
+        All
+      </button>
+      <button
+        class="g-pill"
+        *ngFor="let cat of categories"
+        [class.on]="activeCategory === cat.name"
+        (click)="viewCategory(cat, $event)"
+      >
+        {{ cat.name }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Grid Layout -->
+  <div class="two">
+    <!-- New Releases -->
+    <div class="sec">
+      <div class="sec-hd">
+        <div class="sec-title">
+          <div class="ico p"><i class="fa-solid fa-compact-disc"></i></div>
+          New Releases
+        </div>
+        <a class="va" (click)="viewAllAlbums()" style="cursor: pointer"
+          >View All <i class="fas fa-arrow-right"></i
+        ></a>
+      </div>
+
+      <div class="loading-container" *ngIf="loading.newReleases">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+
+      <div class="a-grid" *ngIf="!loading.newReleases">
+        <div
+          class="a-card"
+          *ngFor="let album of newReleases"
+          (click)="viewAlbum(album)"
+        >
+          <div class="a-thumb">
+            <img
+              *ngIf="getImageUrl(album.images)"
+              [src]="getImageUrl(album.images)"
+              [alt]="album.name"
+            />
+            <div class="pov"><i class="fas fa-play"></i></div>
           </div>
-          <div class="stat-item">
-            <i class="fas fa-users"></i>
-            <span>Top Artists</span>
-          </div>
-          <div class="stat-item">
-            <i class="fas fa-fire"></i>
-            <span>Trending Now</span>
+          <div class="a-info">
+            <div class="a-title">{{ album.name }}</div>
+            <div class="a-artist">{{ album.artists[0].name }}</div>
           </div>
         </div>
-        <div class="hero-actions">
-          <a routerLink="/search" class="btn btn-primary btn-lg">
-            <i class="fas fa-search"></i> Explore Music
-          </a>
-          <a
-            routerLink="/search"
-            [queryParams]="{ q: 'trending', type: 'track' }"
-            class="btn btn-outline-light btn-lg"
-          >
-            <i class="fas fa-fire"></i> Trending Now
-          </a>
+      </div>
+    </div>
+
+    <!-- Trending Now -->
+    <div class="sec sec-r">
+      <div class="sec-hd">
+        <div class="sec-title">
+          <div class="ico r"><i class="fa-solid fa-fire"></i></div>
+          Trending Now
+        </div>
+        <a class="va" (click)="viewAllTracks()" style="cursor: pointer"
+          >View All <i class="fas fa-arrow-right"></i
+        ></a>
+      </div>
+
+      <div class="t-list">
+        <div
+          class="t-row"
+          *ngFor="let track of trendingTracks; let i = index"
+          (click)="playTrack(track)"
+        >
+          <div class="t-rk">{{ i + 1 }}</div>
+          <div class="t-pl"><i class="fas fa-play"></i></div>
+          <div class="t-th">
+            <img
+              *ngIf="getImageUrl(track.album.images)"
+              [src]="getImageUrl(track.album.images)"
+              [alt]="track.name"
+            />
+          </div>
+          <div class="t-inf">
+            <div class="t-nm">{{ track.name }}</div>
+            <div class="t-ar">{{ track.artists[0].name }}</div>
+          </div>
+          <div class="t-mt">
+            <span class="bdg hot" *ngIf="i < 3">🔥 HOT</span>
+            <div class="t-dur" *ngIf="i >= 3">
+              {{ track.duration_ms | date: "mm:ss" }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="container">
-    <!-- New Releases -->
-    <section
-      class="section"
-      *ngIf="!loading.newReleases || newReleases.length > 0"
-    >
-      <div class="section-header">
-        <h2 class="section-title"><i class="fas fa-music"></i> New Releases</h2>
-        <button
-          class="btn btn-outline-primary btn-sm"
-          (click)="viewAllAlbums()"
-        >
-          View All
-        </button>
+  <!-- Top Artists -->
+  <div class="bot-sec">
+    <div class="sec-hd">
+      <div class="sec-title">
+        <div class="ico g"><i class="fa-solid fa-user"></i></div>
+        Top Artists
       </div>
+      <a class="va" (click)="viewAllArtists()" style="cursor: pointer"
+        >View All <i class="fas fa-arrow-right"></i
+      ></a>
+    </div>
 
-      <div class="loading-container" *ngIf="loading.newReleases">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+    <div class="ar-grid">
+      <div
+        class="ar-card"
+        *ngFor="let artist of trendingArtists"
+        (click)="viewArtist(artist)"
+      >
+        <div class="ar-av">
+          <img
+            *ngIf="getImageUrl(artist.images)"
+            [src]="getImageUrl(artist.images)"
+            [alt]="artist.name"
+          />
+        </div>
+        <div class="ar-nm">{{ artist.name }}</div>
+        <div class="ar-gn">{{ artist.genres?.[0] | titlecase }}</div>
+        <div class="ar-fl">
+          {{ formatNumber(artist.followers?.total) }} followers
         </div>
       </div>
-
-      <div class="album-grid" *ngIf="!loading.newReleases">
-        <div
-          class="album-card"
-          *ngFor="let album of newReleases"
-          (click)="viewAlbum(album)"
-        >
-          <div class="album-image">
-            <img [src]="getImageUrl(album.images)" [alt]="album.name" />
-            <div
-              class="play-overlay"
-              (click)="playAlbumPreview(album, $event)"
-              [class.playing]="isAlbumPlaying(album.id)"
-            >
-              <i
-                class="fas"
-                [class.fa-play]="!isAlbumPlaying(album.id)"
-                [class.fa-spinner]="isAlbumPlaying(album.id)"
-                [class.fa-spin]="isAlbumPlaying(album.id)"
-              ></i>
-            </div>
-          </div>
-          <div class="album-info">
-            <h5 class="album-name">{{ album.name }}</h5>
-            <p class="album-artist">{{ album.artists[0].name }}</p>
-            <p class="album-date">
-              {{ album.release_date | date : "MMM yyyy" }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Trending Artists -->
-    <section
-      class="section"
-      *ngIf="!loading.artists || trendingArtists.length > 0"
-    >
-      <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-users"></i> Trending Artists
-        </h2>
-        <button
-          class="btn btn-outline-primary btn-sm"
-          (click)="viewAllArtists()"
-        >
-          View All
-        </button>
-      </div>
-
-      <div class="loading-container" *ngIf="loading.artists">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-
-      <div class="artist-grid" *ngIf="!loading.artists">
-        <div
-          class="artist-card"
-          *ngFor="let artist of trendingArtists"
-          (click)="viewArtist(artist)"
-        >
-          <div class="artist-image">
-            <img [src]="getImageUrl(artist.images)" [alt]="artist.name" />
-            <div class="play-overlay">
-              <i class="fas fa-music"></i>
-            </div>
-          </div>
-          <div class="artist-info">
-            <h5 class="artist-name">{{ artist.name }}</h5>
-            <p class="artist-followers">
-              {{ formatNumber(artist.followers?.total) }} followers
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Categories -->
-    <section
-      class="section"
-      *ngIf="!loading.categories || categories.length > 0"
-    >
-      <div class="section-header">
-        <h2 class="section-title">
-          <i class="fas fa-th-large"></i> Browse by Category
-        </h2>
-        <button
-          class="btn btn-outline-primary btn-sm"
-          (click)="viewAllCategories()"
-        >
-          View All
-        </button>
-      </div>
-
-      <div class="loading-container" *ngIf="loading.categories">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-
-      <div class="category-grid" *ngIf="!loading.categories">
-        <div
-          class="category-card"
-          *ngFor="let category of categories; trackBy: trackByCategoryId"
-          (click)="viewCategory(category, $event)"
-          [title]="'Click to view ' + category.name + ' playlists'"
-        >
-          <div class="category-image">
-            <img [src]="getImageUrl(category.icons)" [alt]="category.name" />
-            <div class="play-overlay">
-              <i class="fas fa-music"></i>
-            </div>
-          </div>
-          <div class="category-info">
-            <h5 class="category-name">{{ category.name }}</h5>
-          </div>
-        </div>
-      </div>
-    </section>
+    </div>
   </div>
 </div>

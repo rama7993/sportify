@@ -1,16 +1,17 @@
 // Track Container
 .track-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
-  color: #ffffff;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 4rem;
 }
 
 // Track Header
 .track-header {
   background: linear-gradient(
-    135deg,
-    rgba(29, 185, 84, 0.1) 0%,
-    rgba(30, 215, 96, 0.05) 100%
+    180deg,
+    rgba(29, 185, 84, 0.15) 0%,
+    transparent 100%
   );
   padding: 2rem 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);

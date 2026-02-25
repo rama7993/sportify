@@ -41,13 +41,14 @@ A modern, responsive music discovery platform built with Angular 17, featuring r
 
 ### 🎨 Design & UX
 
-- **🌟 Glassmorphism Design**: Modern frosted glass effects with dark theme
-- **📱 Fully Responsive**: Perfect experience on desktop, tablet, and mobile
-- **✨ Smooth Animations**: Hover effects and loading states
-- **🎯 User-Friendly**: Intuitive navigation and clear visual hierarchy
-- **⚡ Performance Optimized**: Fast loading with proper state management
-- **🎵 Spotify Theme**: Consistent green color scheme with professional styling
-- **🔄 Interactive Elements**: All cards and components are clickable with smooth transitions
+- **🌟 Glassmorphism Design**: Modern frosted glass effects with dark theme.
+- **📱 Fully Responsive**: Perfect experience on desktop, tablet, and mobile, with dedicated CSS Grid layouts protecting UI elements like the audio player on small devices.
+- **✨ Smooth Animations**: Hover effects, loading states, and dynamic playback state icons mapping instantly.
+- **🎯 User-Friendly**: Intuitive navigation, clear visual hierarchy, and unified error handling/fallback images.
+- **⚡ Performance Optimized**: Fast loading with proper state management and SSR handling.
+- **🎵 Spotify Theme**: Consistent dark aesthetic (`#121212` background) with vibrant green (`#1DB954`) interaction points overriding obsolete gradients.
+- **🔄 Interactive Elements**: All cards and components are clickable with smooth transitions.
+- **🎧 Seamless Queue Tracking**: Built-in state management allows you to seamlessly explore a full album or playlist without manually re-triggering tracks.
 
 ## 🚀 Live Demo
 
@@ -107,7 +108,6 @@ This project demonstrates advanced Angular development skills and is perfect for
    ```
 
 3. **Set up Spotify API credentials**
-
    - Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
    - Create a new app
    - Copy your Client ID and Client Secret
@@ -157,7 +157,6 @@ This project demonstrates advanced Angular development skills and is perfect for
    ```
 
 3. **Set environment variables in Vercel dashboard**
-
    - `SPOTIFY_CLIENT_ID`: Your Spotify Client ID
    - `SPOTIFY_CLIENT_SECRET`: Your Spotify Client Secret
    - `BACKEND_API_URL`: Your backend API URL (if using external backend)

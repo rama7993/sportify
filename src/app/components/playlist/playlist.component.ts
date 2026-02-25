@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
-import { TrackPlayingService } from '../../../services/track-playing.service';
+import { TrackPlayingService } from '../../services/track-playing.service';
 import { Subject, takeUntil } from 'rxjs';
 import {
   BreadcrumbComponent,
@@ -33,7 +33,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private spotifyService: SpotifyService,
-    private trackPlayingService: TrackPlayingService
+    private trackPlayingService: TrackPlayingService,
   ) {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
@@ -94,8 +94,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       });
   }
 
-  async playTrack(track: Track): Promise<void> {
-    await this.trackPlayingService.playTrack(track, {
+  async playTrack(track: Track, index: number): Promise<void> {
+    await this.trackPlayingService.playQueue(this.tracks, index, {
       playlist: this.playlist,
     });
   }
@@ -129,9 +129,20 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   }
 
   decodeHtmlEntities(text: string): string {
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = text;
-    return textarea.value;
+    if (!text) return '';
+    if (typeof document !== 'undefined') {
+      const textarea = document.createElement('textarea');
+      textarea.innerHTML = text;
+      return textarea.value;
+    }
+    // SSR Fallback
+    return text
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'")
+      .replace(/&#39;/g, "'");
   }
 
   toggleDescription(): void {
@@ -140,7 +151,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   getTruncatedDescription(
     description: string,
-    maxLength: number = 200
+    maxLength: number = 200,
   ): string {
     if (!description) return '';
     if (description.length <= maxLength) return description;

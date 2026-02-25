@@ -1,24 +1,21 @@
 .artist-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  color: white;
+  background: var(--bg);
+  color: var(--text);
+  padding-bottom: 4rem;
 }
 
 .artist-header {
   background: linear-gradient(
-    135deg,
-    rgba(29, 185, 84, 0.8) 0%,
-    rgba(30, 215, 96, 0.8) 100%
+    180deg,
+    rgba(29, 185, 84, 0.15) 0%,
+    transparent 100%
   );
   padding: 3rem 0;
   margin-bottom: 2rem;
 
   &.loading {
-    background: linear-gradient(
-      135deg,
-      rgba(30, 60, 114, 0.8) 0%,
-      rgba(42, 82, 152, 0.8) 100%
-    );
+    background: transparent;
   }
 }
 

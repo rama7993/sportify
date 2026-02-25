@@ -1,121 +1,92 @@
-<div class="audio-player">
-  <div class="player-container">
-    <!-- Track Info -->
-    <div class="track-info">
-      <div class="track-image">
-        <img
-          [src]="
-            currentTrack
-              ? getImageUrl(currentTrack.album?.images)
-              : getPlaceholderImage()
-          "
-          [alt]="currentTrack?.album?.name || 'No Track'"
-        />
-      </div>
-      <div class="track-details">
-        <h5 class="track-name">
-          {{ currentTrack?.name || "No track selected" }}
-        </h5>
-        <p class="track-artist">
-          {{
-            currentTrack
-              ? getArtistNames(currentTrack.artists || [])
-              : "Select a track to play"
-          }}
-        </p>
+<div class="player">
+  <div class="p-trk">
+    <div class="p-th">
+      <img
+        *ngIf="
+          currentTrack
+            ? getImageUrl(currentTrack.album?.images)
+            : getPlaceholderImage()
+        "
+        [src]="
+          currentTrack
+            ? getImageUrl(currentTrack.album?.images)
+            : getPlaceholderImage()
+        "
+        [alt]="currentTrack?.album?.name || 'No Track'"
+      />
+    </div>
+    <div style="min-width: 0">
+      <div class="p-nm">{{ currentTrack?.name || "No track selected" }}</div>
+      <div class="p-ar">
+        {{
+          currentTrack
+            ? getArtistNames(currentTrack.artists || [])
+            : "Select a track to play"
+        }}
       </div>
     </div>
-
-    <!-- Player Controls -->
-    <div class="player-controls">
-      <div class="control-buttons">
-        <button
-          class="control-btn"
-          (click)="toggleShuffle()"
-          [class.active]="isShuffled"
-        >
-          <i class="fas fa-random"></i>
-        </button>
-
-        <button class="control-btn prev-btn">
-          <i class="fas fa-step-backward"></i>
-        </button>
-
-        <button class="control-btn play-btn" (click)="togglePlayPause()">
-          <i
-            class="fas"
-            [class.fa-play]="!isPlaying"
-            [class.fa-pause]="isPlaying"
-          ></i>
-        </button>
-
-        <button class="control-btn next-btn">
-          <i class="fas fa-step-forward"></i>
-        </button>
-
-        <button
-          class="control-btn"
-          (click)="toggleRepeat()"
-          [class.active]="repeatMode !== 'none'"
-        >
-          <i
-            class="fas"
-            [class.fa-redo]="repeatMode === 'all'"
-            [class.fa-redo-alt]="repeatMode === 'one'"
-          ></i>
-        </button>
-      </div>
-
-      <!-- Progress Bar -->
-      <div class="progress-container">
-        <span class="time current-time">{{
-          currentTrack ? formatTime(currentTime) : "0:00"
-        }}</span>
-        <div class="progress-bar-container">
-          <input
-            type="range"
-            class="progress-bar"
-            min="0"
-            [max]="duration || 0"
-            [value]="currentTime"
-            (input)="seekTo($event)"
-            [disabled]="!currentTrack"
-            #progressBar
-          />
-        </div>
-        <span class="time total-time">{{
-          currentTrack ? formatTime(duration) : "0:00"
-        }}</span>
-      </div>
-    </div>
-
-    <!-- Volume Controls -->
-    <div class="volume-controls">
-      <button class="control-btn" (click)="toggleMute()">
+  </div>
+  <div class="p-ctrl">
+    <div class="p-btns">
+      <button
+        class="c-btn sm"
+        (click)="toggleShuffle()"
+        [class.active]="isShuffled"
+      >
+        <i class="fa-solid fa-shuffle"></i>
+      </button>
+      <button class="c-btn" (click)="previousTrack()">
+        <i class="fa-solid fa-backward-step"></i>
+      </button>
+      <button class="pb" (click)="togglePlayPause()">
         <i
-          class="fas"
-          [class.fa-volume-up]="!isMuted"
-          [class.fa-volume-mute]="isMuted"
+          class="fa-solid"
+          [class.fa-play]="!isPlaying"
+          [class.fa-pause]="isPlaying"
         ></i>
       </button>
-
-      <div class="volume-slider-container">
-        <input
-          type="range"
-          class="volume-slider"
-          min="0"
-          max="1"
-          step="0.01"
-          [value]="volume"
-          (input)="setVolume($event)"
-        />
+      <button class="c-btn" (click)="nextTrack()">
+        <i class="fa-solid fa-forward-step"></i>
+      </button>
+      <button
+        class="c-btn sm"
+        (click)="toggleRepeat()"
+        [class.active]="repeatMode !== 'none'"
+      >
+        <i class="fa-solid fa-repeat"></i>
+      </button>
+    </div>
+    <div class="prog">
+      <span class="pt">{{
+        currentTrack ? formatTime(currentTime) : "0:00"
+      }}</span>
+      <div class="pbar" (click)="seekTo($event)">
+        <div
+          class="pfill"
+          [style.width.%]="duration ? (currentTime / duration) * 100 : 0"
+        ></div>
       </div>
-
-      <span class="volume-percentage">{{ Math.round(volume * 100) }}%</span>
+      <span class="pt e">{{
+        currentTrack ? formatTime(duration) : "0:00"
+      }}</span>
+    </div>
+  </div>
+  <div class="p-right">
+    <div class="p-vol">
+      <button class="v-btn" (click)="toggleMute()">
+        <i
+          class="fa-solid"
+          [class.fa-volume-high]="!isMuted"
+          [class.fa-volume-xmark]="isMuted"
+        ></i>
+      </button>
+      <div class="v-bar" (click)="setVolume($event)">
+        <div class="vfill" [style.width.%]="volume * 100"></div>
+      </div>
+      <span class="v-pct">{{ volume * 100 | number: "1.0-0" }}%</span>
     </div>
   </div>
 
-  <!-- Hidden Audio Element -->
   <audio
     #audioElement
     (timeupdate)="onTimeUpdate()"

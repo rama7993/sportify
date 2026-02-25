@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
-import { TrackPlayingService } from '../../../services/track-playing.service';
+import { TrackPlayingService } from '../../services/track-playing.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import {
@@ -27,7 +27,7 @@ export class TrackComponent implements OnInit, OnDestroy {
   constructor(
     private spotifyService: SpotifyService,
     private trackPlayingService: TrackPlayingService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.route.params.subscribe((params) => {
       this.id = params['id'];

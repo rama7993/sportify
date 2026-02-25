@@ -1,34 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
-/* Spotify-like global styles */
+:root {
+  --green: #1db954;
+  --bg: #0a0a0f;
+  --card: #13131c;
+  --card2: #1a1a28;
+  --nav: rgba(10, 10, 15, 0.9);
+  --text: #ffffff;
+  --muted: #b3b3b3;
+  --accent: #7c5cfc;
+  --red: #ff6b6b;
+  --player: rgba(12, 12, 19, 0.98);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: "Inter", sans-serif;
+  background: var(--bg) !important;
+  color: var(--text);
   overflow-x: hidden;
 }
 
-body {
-  background-color: #121212;
-  color: #ffffff;
-  font-family: "Circular", "Helvetica Neue", Helvetica, Arial, sans-serif;
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 5px;
 }
 
-/* Ensure proper scrolling and layout */
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+/* Utility Classes */
 .main-content {
   position: relative;
   z-index: 1;
-}
-
-.audio-player {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  padding-bottom: 88px; /* Space for player */
 }

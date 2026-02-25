@@ -205,14 +205,7 @@
                   >{{ track.album.name }}</a
                 >
               </p>
-              <div class="track-details">
-                <span class="track-duration">{{
-                  formatDuration(track.duration_ms)
-                }}</span>
-                <span class="track-popularity"
-                  >{{ track.popularity }}% popular</span
-                >
-              </div>
+
               <div class="track-actions">
                 <button
                   class="action-btn play-btn"
@@ -230,9 +223,7 @@
                     [class.fa-spin]="isTrackSearchingPreview(track.id)"
                   ></i>
                   <span>{{
-                    isTrackSearchingPreview(track.id)
-                      ? "Searching..."
-                      : "Play Preview"
+                    isTrackSearchingPreview(track.id) ? "Searching..." : "Play"
                   }}</span>
                 </button>
 
@@ -246,6 +237,9 @@
                   <span>Spotify</span>
                 </button>
               </div>
+            </div>
+            <div class="track-duration-right">
+              {{ formatDuration(track.duration_ms) }}
             </div>
           </div>
         </div>
@@ -297,7 +291,7 @@
                 {{ album.name }}
               </h5>
               <p class="album-artist">{{ album.artists[0].name }}</p>
-              <p class="album-year">{{ album.release_date | date : "yyyy" }}</p>
+              <p class="album-year">{{ album.release_date | date: "yyyy" }}</p>
             </div>
           </div>
         </div>

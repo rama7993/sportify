@@ -101,8 +101,19 @@
             <div
               class="play-overlay"
               (click)="playTrack(track); $event.stopPropagation()"
+              [class.playing]="isTrackPlaying(track.id)"
+              [class.searching]="isTrackSearchingPreview(track.id)"
             >
-              <i class="fas fa-play"></i>
+              <i
+                class="fas"
+                [class.fa-play]="
+                  !isTrackPlaying(track.id) &&
+                  !isTrackSearchingPreview(track.id)
+                "
+                [class.fa-pause]="isTrackPlaying(track.id)"
+                [class.fa-spinner]="isTrackSearchingPreview(track.id)"
+                [class.fa-spin]="isTrackSearchingPreview(track.id)"
+              ></i>
             </div>
           </div>
           <div class="track-info">
@@ -118,7 +129,6 @@
           <div class="track-duration">
             {{ formatDuration(track.duration_ms) }}
           </div>
-          <div class="track-popularity">{{ track.popularity }}%</div>
         </div>
       </div>
     </section>
@@ -153,7 +163,7 @@
             <h5 class="album-name">
               {{ album.name }}
             </h5>
-            <p class="album-year">{{ album.release_date | date : "yyyy" }}</p>
+            <p class="album-year">{{ album.release_date | date: "yyyy" }}</p>
             <p class="album-type">{{ album.album_type | titlecase }}</p>
           </div>
         </div>

@@ -21,7 +21,7 @@
           </p>
           <p class="album-meta">
             <span class="album-year">{{
-              album.release_date | date : "yyyy"
+              album.release_date | date: "yyyy"
             }}</span>
             <span class="album-type">{{ album.album_type | titlecase }}</span>
             <span class="album-tracks">{{ tracks.length }} tracks</span>
@@ -29,7 +29,7 @@
           <div class="album-actions">
             <button
               class="btn btn-primary"
-              (click)="playTrack(tracks[0])"
+              (click)="playAlbum()"
               *ngIf="tracks.length > 0"
             >
               <i class="fas fa-play"></i> Play Album
@@ -104,7 +104,7 @@
             <img [src]="getImageUrl(album.images)" [alt]="album.name" />
             <div
               class="play-overlay"
-              (click)="playTrack(track); $event.stopPropagation()"
+              (click)="playTrack(track, i); $event.stopPropagation()"
               [class.playing]="isTrackPlaying(track.id)"
               [class.searching]="isTrackSearchingPreview(track.id)"
             >
@@ -129,13 +129,12 @@
           <div class="track-duration">
             {{ formatDuration(track.duration_ms) }}
           </div>
-          <div class="track-popularity">{{ track.popularity }}%</div>
 
           <!-- Action Buttons -->
           <div class="track-actions">
             <button
               class="action-btn play-btn"
-              (click)="playTrack(track); $event.stopPropagation()"
+              (click)="playTrack(track, i); $event.stopPropagation()"
               title="Play Preview"
             >
               <i
@@ -202,7 +201,7 @@
           </div>
           <div class="detail-content">
             <h5>Release Date</h5>
-            <p>{{ album.release_date | date : "fullDate" }}</p>
+            <p>{{ album.release_date | date: "fullDate" }}</p>
           </div>
         </div>
 

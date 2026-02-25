@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SpotifyService, Track } from '../../../services/spotify.service';
+import { TrackPlayingService } from '../../services/track-playing.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -31,7 +32,10 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(
+    private spotifyService: SpotifyService,
+    private trackPlayingService: TrackPlayingService,
+  ) {}
 
   ngOnInit(): void {
     this.subscribeToPlayerState();
@@ -86,6 +90,18 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
+  previousTrack(): void {
+    if (this.audioElement && this.currentTime > 3) {
+      this.audioElement.nativeElement.currentTime = 0;
+    } else {
+      this.trackPlayingService.playPrevious();
+    }
+  }
+
+  nextTrack(): void {
+    this.handleTrackEnd();
+  }
+
   stopTrack(): void {
     this.spotifyService.stopTrack();
     if (this.audioElement) {
@@ -121,18 +137,18 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
         }
         break;
       case 'all':
-        // In a real app, you'd play the next track in the queue
-        this.stopTrack();
-        break;
       default:
-        this.stopTrack();
+        this.trackPlayingService.playNext();
         break;
     }
   }
 
-  seekTo(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const seekTime = parseFloat(target.value);
+  seekTo(event: MouseEvent): void {
+    const progressBar = event.currentTarget as HTMLElement;
+    const rect = progressBar.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const percentage = x / rect.width;
+    const seekTime = percentage * this.duration;
 
     if (this.audioElement) {
       this.audioElement.nativeElement.currentTime = seekTime;
@@ -140,9 +156,16 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
-  setVolume(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.volume = parseFloat(target.value);
+  setVolume(event: MouseEvent): void {
+    const volumeBar = event.currentTarget as HTMLElement;
+    const rect = volumeBar.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    let newVolume = x / rect.width;
+
+    // Clamp volume between 0 and 1
+    newVolume = Math.max(0, Math.min(1, newVolume));
+
+    this.volume = newVolume;
 
     if (this.audioElement) {
       this.audioElement.nativeElement.volume = this.volume;
@@ -182,14 +205,11 @@ export class AudioPlayerComponent implements OnInit, OnDestroy {
   }
 
   getImageUrl(images: any[]): string {
-    return images && images.length > 0
-      ? images[0].url
-      : this.getPlaceholderImage();
+    return images && images.length > 0 ? images[0].url : '';
   }
 
   getPlaceholderImage(): string {
-    // Return a data URI for a simple music note placeholder
-    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iMTAiIGZpbGw9IiMxZTNjNzIiLz4KPHN2ZyB4PSIyMCIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJTNi40OCAyMiAxMiAyMlMyMiAxNy41MiAyMiAxMlMxNy41MiAyIDEyIDJaTTEwIDE3VjdMMTYgMTJMMTAgMTdaIiBmaWxsPSIjMWRiOTU0Ii8+Cjwvc3ZnPgo8L3N2Zz4K';
+    return '';
   }
 
   getArtistNames(artists: any[]): string {

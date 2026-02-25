@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SpotifyService, Track } from '../../../services/spotify.service';
+import { TrackPlayingService } from '../../services/track-playing.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import {
@@ -32,7 +33,8 @@ export class ArtistComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private trackPlayingService: TrackPlayingService,
   ) {
     this.route.params.subscribe((params) => {
       this.id = params['id'];
@@ -106,8 +108,16 @@ export class ArtistComponent implements OnInit, OnDestroy {
       });
   }
 
-  playTrack(track: Track): void {
-    this.spotifyService.playTrack(track);
+  async playTrack(track: Track): Promise<void> {
+    await this.trackPlayingService.playTrack(track);
+  }
+
+  isTrackPlaying(trackId: string): boolean {
+    return this.trackPlayingService.isTrackPlaying(trackId);
+  }
+
+  isTrackSearchingPreview(trackId: string): boolean {
+    return this.trackPlayingService.isTrackSearchingPreview(trackId);
   }
 
   formatDuration(ms: number): string {

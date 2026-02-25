@@ -97,7 +97,7 @@
             <img [src]="getImageUrl(playlist.images)" [alt]="playlist.name" />
             <div
               class="play-overlay"
-              (click)="playTrack(track); $event.stopPropagation()"
+              (click)="playTrack(track, i); $event.stopPropagation()"
               [class.playing]="isTrackPlaying(track.id)"
               [class.searching]="isTrackSearchingPreview(track.id)"
             >
@@ -122,13 +122,12 @@
           <div class="track-duration">
             {{ formatDuration(track.duration_ms) }}
           </div>
-          <div class="track-popularity">{{ track.popularity }}%</div>
 
           <!-- Action Buttons -->
           <div class="track-actions">
             <button
               class="action-btn play-btn"
-              (click)="playTrack(track); $event.stopPropagation()"
+              (click)="playTrack(track, i); $event.stopPropagation()"
               title="Play Preview"
             >
               <i

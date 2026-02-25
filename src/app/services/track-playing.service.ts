@@ -13,16 +13,80 @@ export interface TrackPlayingState {
 export class TrackPlayingService {
   private playingStates = new Map<string, TrackPlayingState>();
 
-  constructor(private spotifyService: SpotifyService) {}
+  private queue: Track[] = [];
+  private currentQueueIndex: number = -1;
+  private currentContextInfo: { album?: any; playlist?: void } | undefined;
+
+  constructor(private spotifyService: SpotifyService) {
+    this.spotifyService.isPlaying$.subscribe((isPlaying) => {
+      this.playingStates.forEach((state, trackId) => {
+        this.playingStates.set(trackId, { ...state, isPlaying });
+      });
+    });
+  }
+
+  /**
+   * Play a queue of tracks
+   */
+  async playQueue(
+    tracks: Track[],
+    startIndex: number = 0,
+    contextInfo?: { album?: any; playlist?: any },
+  ): Promise<void> {
+    if (!tracks || tracks.length === 0) return;
+
+    this.queue = tracks;
+    this.currentQueueIndex = startIndex;
+    this.currentContextInfo = contextInfo;
+
+    if (startIndex >= 0 && startIndex < tracks.length) {
+      await this.playTrack(tracks[startIndex], contextInfo);
+    }
+  }
+
+  /**
+   * Play the next track in the queue
+   */
+  async playNext(): Promise<boolean> {
+    if (
+      this.queue.length > 0 &&
+      this.currentQueueIndex < this.queue.length - 1
+    ) {
+      this.currentQueueIndex++;
+      await this.playTrack(
+        this.queue[this.currentQueueIndex],
+        this.currentContextInfo,
+      );
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Play the previous track in the queue
+   */
+  async playPrevious(): Promise<boolean> {
+    if (this.queue.length > 0 && this.currentQueueIndex > 0) {
+      this.currentQueueIndex--;
+      await this.playTrack(
+        this.queue[this.currentQueueIndex],
+        this.currentContextInfo,
+      );
+      return true;
+    }
+    return false;
+  }
 
   /**
    * Play a track with preview URL enhancement
    */
   async playTrack(
     track: Track,
-    contextInfo?: { album?: any; playlist?: any }
+    contextInfo?: { album?: any; playlist?: any },
   ): Promise<void> {
     if (!track) return;
+
+    this.clearAllPlayingStates();
 
     // Set loading state
     this.setPlayingState(track.id, {
@@ -107,6 +171,17 @@ export class TrackPlayingService {
   }
 
   /**
+   * Get image URL from an array of images
+   */
+  getImageUrl(images: any[]): string {
+    if (images && images.length > 0 && images[0]?.url) {
+      return images[0].url;
+    }
+    // Return local generic image asset
+    return 'assets/placeholder-album.svg';
+  }
+
+  /**
    * Get preview status message
    */
   getPreviewStatusMessage(track: Track): string {
@@ -121,15 +196,6 @@ export class TrackPlayingService {
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  }
-
-  /**
-   * Get image URL from images array
-   */
-  getImageUrl(images: any[]): string {
-    return images && images.length > 0
-      ? images[0].url
-      : 'assets/placeholder-album.png';
   }
 
   /**
@@ -160,7 +226,7 @@ export class TrackPlayingService {
    */
   private enhanceTrackWithContext(
     track: Track,
-    contextInfo?: { album?: any; playlist?: any }
+    contextInfo?: { album?: any; playlist?: any },
   ): Track {
     if (!contextInfo) return track;
 

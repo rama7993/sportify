@@ -36,12 +36,8 @@
               <span>{{ formatDuration(track.duration_ms) }}</span>
             </div>
             <div class="meta-item">
-              <i class="fas fa-fire"></i>
-              <span>{{ track.popularity }}% popular</span>
-            </div>
-            <div class="meta-item">
               <i class="fas fa-calendar"></i>
-              <span>{{ track.album.release_date | date : "yyyy" }}</span>
+              <span>{{ track.album.release_date | date: "yyyy" }}</span>
             </div>
           </div>
         </div>
@@ -119,12 +115,8 @@
                 <span>{{ formatDuration(track.duration_ms) }}</span>
               </div>
               <div class="meta-item">
-                <i class="fas fa-fire"></i>
-                <span>{{ track.popularity }}% popular</span>
-              </div>
-              <div class="meta-item">
                 <i class="fas fa-calendar"></i>
-                <span>{{ track.album.release_date | date : "yyyy" }}</span>
+                <span>{{ track.album.release_date | date: "yyyy" }}</span>
               </div>
               <div class="meta-item" *ngIf="hasPreviewUrl()">
                 <i class="fas fa-check-circle"></i>
@@ -164,7 +156,7 @@
           <p class="album-artist">{{ getArtistNames(track.album.artists) }}</p>
           <div class="album-meta">
             <span class="album-date">{{
-              track.album.release_date | date : "MMM d, yyyy"
+              track.album.release_date | date: "MMM d, yyyy"
             }}</span>
             <span class="album-tracks"
               >{{ track.album.total_tracks }} tracks</span
